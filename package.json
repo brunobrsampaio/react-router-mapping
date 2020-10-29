@@ -9,18 +9,14 @@
 		"build": "rollup -c",
 		"postinstall": "rm -rf node_modules"
 	},
-	"author": {
-		"name": "Bruno Brienza Sampaio",
-		"email" : "brunobrsampaio@gmail.com",
-		"url" : "https://brunosampaio.dev/"
-	},
+	"author": "Bruno Brienza Sampaio",
 	"license": "MIT",
 	"publishConfig": {
-		"registry": "https://npm.pkg.github.com/brunobrsampaio"
+		"registry": "https://npm.pkg.github.com/"
 	},
 	"repository": {
 		"type" : "git",
-		"url" : "https://github.com/brunobrsampaio/react-router-mapping"
+		"url" : "https://github.com/brunobrsampaio/react-router-mapping.git"
 	},
 	"peerDependencies": {
 		"react": "^16.13.1",
