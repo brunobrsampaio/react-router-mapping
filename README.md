@@ -5,6 +5,7 @@ Esta biblioteca tem como finalidade auxiliar os desenvolvedores a terem uma melh
 # Pré requisitos
 
 > react@^16.13.1
+
 > react-dom@^16.13.1
 > react-router-dom@^5.2.0
 
@@ -26,43 +27,43 @@ import { Mapping, Grouping } from 'react-router-mapping';
 
 export default () => {
 		
-	return (
-		<BrowserRouter>
-			<Switch>
-				<Mapping>
-					<Route exact name="home" label="Home"  path="/" component={Home} />
-					<Route exact name="route-one" label="Route One" path="/route-one" component={Component1} />
-					<Route exact name="route-two" label="Route Two" path="/route-two" component={Component2} />
-					<Route exact name="route-three" label="Route Three" path="/route-three" component={Component3} />
-					<Grouping path="level-one">
-						<Route exact name="route-four" label="Route Four" path="/route-four" render={() => {
+  return (
+    <BrowserRouter>
+      <Switch>
+        <Mapping>
+          <Route exact name="home" label="Home"  path="/" component={Home} />
+          <Route exact name="route-one" label="Route One" path="/route-one" component={Component1} />
+          <Route exact name="route-two" label="Route Two" path="/route-two" component={Component2} />
+          <Route exact name="route-three" label="Route Three" path="/route-three" component={Component3} />
+          <Grouping path="level-one">
+            <Route exact name="route-four" label="Route Four" path="/route-four" render={() => {
 							
-							return <Component4 />
-						}} />
-						<Route exact name="route-five" label="Route Five" path="/route-five" render={() => {
+              return <Component4 />
+            }} />
+            <Route exact name="route-five" label="Route Five" path="/route-five" render={() => {
 							
-							return <Component5 />
-						}} />
-						<Route exact name="route-six" label="Route Six" path="/route-six" render={() => {
+              return <Component5 />
+            }} />
+            <Route exact name="route-six" label="Route Six" path="/route-six" render={() => {
 							
-							return <Component6 />
-						}} />
-						<Grouping path="level-two">
-							<Route exact name="route-seven" label="Route Seven" path="/route-seven">
-								<Component7 />
-							</Route>
-							<Route exact name="route-eight" label="Route Eight" path="/route-eight">
-								<Component8 />
-							</Route>
-							<Route exact name="route-nine" label="Route Nine" path="/route-nine">
-								<Component9 />
-							</Route>
-						</Grouping>
-					</Grouping>
-				</Mapping>
-			</Switch>
-		</BrowserRouter>
-	);
+              return <Component6 />
+            }} />
+            <Grouping path="level-two">
+              <Route exact name="route-seven" label="Route Seven" path="/route-seven">
+                <Component7 />
+              </Route>
+              <Route exact name="route-eight" label="Route Eight" path="/route-eight">
+                <Component8 />
+              </Route>
+              <Route exact name="route-nine" label="Route Nine" path="/route-nine">
+                <Component9 />
+              </Route>
+            </Grouping>
+          </Grouping>
+        </Mapping>
+      </Switch>
+    </BrowserRouter>
+  );
 };
 ```
 
@@ -78,10 +79,10 @@ O `Grouping` realiza o aninhamento das rotas em seu contexto. Ele recebe uma ún
 
 ```html
 <Grouping path="level-one">
-    <Route path="/route-four" component={Component4} />
-    <Grouping path="level-two">
-	    <Route path="/route-seven" component={Component7} />
-	</Grouping>
+  <Route path="/route-four" component={Component4} />
+  <Grouping path="level-two">
+    <Route path="/route-seven" component={Component7} />
+  </Grouping>
 </Grouping>
 ```
 
@@ -116,12 +117,12 @@ import { useRoute } from 'react-router-group';
 
 export default () => {
 
-	const { all } = useRoute();
+  const { all } = useRoute();
 	
-	useEffect(() => {
-	    console.log(all());
-	}, []);
-	...
+  useEffect(() => {
+    console.log(all());
+  }, []);
+  ...
 }
 ```
 
@@ -131,16 +132,16 @@ Caso utilize somente o atributo `name` em suas rotas, o retorno do método será
 
 ```json
 {
-    "home": "/",
-    "route-eight": "/level-one/level-two/route-eight",
-    "route-five": "/level-one/route-five",
-    "route-four": "/level-one/route-four",
-    "route-nine": "/level-one/level-two/route-nine",
-    "route-one": "/route-one",
-    "route-seven": "/level-one/level-two/route-seven",
-    "route-six": "/level-one/route-six",
-    "route-three": "/route-three",
-    "route-two": "/route-two",
+  "home": "/",
+  "route-eight": "/level-one/level-two/route-eight",
+  "route-five": "/level-one/route-five",
+  "route-four": "/level-one/route-four",
+  "route-nine": "/level-one/level-two/route-nine",
+  "route-one": "/route-one",
+  "route-seven": "/level-one/level-two/route-seven",
+  "route-six": "/level-one/route-six",
+  "route-three": "/route-three",
+  "route-two": "/route-two",
 }
 ```
 
@@ -148,46 +149,46 @@ Agora, caso seja utilizado a propriedade `label` em conjunto, teremos um retorno
 
 ```json
 {
-    "home": {
-    	"path": "/",
-    	"label": "Home"
-    },
-    "route-eight": {
-    	"path": "/level-one/level-two/route-eight",
-    	"label": "Rota 8"
-    },
-    "route-five": {
-    	"path": "/level-one/route-five",
-    	"label": "Rota 5"
-    },
-    "route-four": {
-    	"path": "/level-one/route-four",
-    	"label": "Rota 4"
-    },
-    "route-nine": {
-    	"path": "/level-one/level-two/route-nine",
-    	"label": "Rota 9"
-    },
-    "route-one": {
-    	"path": "/route-one",
-    	"label": "Rota 1"
-    },
-    "route-seven": {
-    	"path": "/level-one/level-two/route-seven",
-    	"label": "Rota 7"
-    },
-    "route-six": {
-    	"path": "/level-one/route-six",
-    	"label": "Rota 6"
-    },
-    "route-three": {
-    	"path": "/route-three",
-    	"label": "Rota 3"
-    },
-    "route-two": {
-    	"path": "/route-two",
-    	"label": "Rota 2"
-    }
+  "home": {
+    "path": "/",
+    "label": "Home"
+  },
+  "route-eight": {
+    "path": "/level-one/level-two/route-eight",
+    "label": "Rota 8"
+  },
+  "route-five": {
+    "path": "/level-one/route-five",
+    "label": "Rota 5"
+  },
+  "route-four": {
+    "path": "/level-one/route-four",
+    "label": "Rota 4"
+  },
+  "route-nine": {
+    "path": "/level-one/level-two/route-nine",
+    "label": "Rota 9"
+  },
+  "route-one": {
+    "path": "/route-one",
+    "label": "Rota 1"
+  },
+  "route-seven": {
+    "path": "/level-one/level-two/route-seven",
+    "label": "Rota 7"
+  },
+  "route-six": {
+    "path": "/level-one/route-six",
+    "label": "Rota 6"
+  },
+  "route-three": {
+    "path": "/route-three",
+    "label": "Rota 3"
+  },
+  "route-two": {
+    "path": "/route-two",
+    "label": "Rota 2"
+  }
 }
 ```
 
@@ -201,12 +202,12 @@ import { useRoute } from 'react-router-group';
 
 export default () => {
 
-	const { route } = useRoute();
-	
-	useEffect(() => {
-	    console.log(route('route-nine'));
-	}, []);
-	...
+  const { route } = useRoute();
+
+  useEffect(() => {
+    console.log(route('route-nine'));
+  }, []);
+  ...
 }
 ```
 
@@ -220,7 +221,7 @@ A segunda e última funcionalidade, seria um complemento para parâmetros dinâm
 
 ```html
 <Grouping path="level-one">
-    <Route path="/route-four/:id" component={Component4} />
+  <Route path="/route-four/:id" component={Component4} />
 </Grouping>
 ```
 
@@ -230,12 +231,12 @@ import { useRoute } from 'react-router-group';
 
 export default () => {
 
-	const { route } = useRoute();
-	
-	useEffect(() => {
-	    console.log(route('route-four', { id : 789 }));
-	}, []);
-	...
+  const { route } = useRoute();
+
+  useEffect(() => {
+    console.log(route('route-four', { id : 789 }));
+  }, []);
+  ...
 }
 ```
 
@@ -255,12 +256,12 @@ import { useBreadcrumb } from 'react-router-group';
 
 export default () => {
 
-	const { breadcrumb } = useBreadcrumb();
-	
-	useEffect(() => {
-	    console.log(breadcrumb);
-	}, []);
-	...
+  const { breadcrumb } = useBreadcrumb();
+
+  useEffect(() => {
+    console.log(breadcrumb);
+  }, []);
+  ...
 }
 ```
 
@@ -268,13 +269,13 @@ export default () => {
 
 ```json
 [
-    {
-    	url: "/", 
-    	label: "Home"
-    },
-    {
-    	url: "/level-one/level-two/route-nine", 
-    	label: "Rota 9"
-    }   
+  {
+    "url": "/", 
+    "label": "Home"
+  },
+  {
+    "url": "/level-one/level-two/route-nine", 
+    "label": "Rota 9"
+  }   
 ]
 ```
