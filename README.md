@@ -7,6 +7,7 @@ Esta biblioteca tem como finalidade auxiliar os desenvolvedores a terem uma melh
 > react@^16.13.1
 
 > react-dom@^16.13.1
+
 > react-router-dom@^5.2.0
 
 # Antes de começar
