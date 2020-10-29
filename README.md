@@ -131,16 +131,16 @@ Caso utilize somente o atributo `name` em suas rotas, o retorno do método será
 
 ```json
 {
-    home: "/"
-    route-eight: "/level-one/level-two/route-eight",
-    route-five: "/level-one/route-five",
-    route-four: "/level-one/route-four",
-    route-nine: "/level-one/level-two/route-nine",
-    route-one: "/route-one",
-    route-seven: "/level-one/level-two/route-seven",
-    route-six: "/level-one/route-six",
-    route-three: "/route-three",
-    route-two: "/route-two",
+    "home": "/",
+    "route-eight": "/level-one/level-two/route-eight",
+    "route-five": "/level-one/route-five",
+    "route-four": "/level-one/route-four",
+    "route-nine": "/level-one/level-two/route-nine",
+    "route-one": "/route-one",
+    "route-seven": "/level-one/level-two/route-seven",
+    "route-six": "/level-one/route-six",
+    "route-three": "/route-three",
+    "route-two": "/route-two",
 }
 ```
 
@@ -148,45 +148,45 @@ Agora, caso seja utilizado a propriedade `label` em conjunto, teremos um retorno
 
 ```json
 {
-    home: {
-    	path: "/",
-    	label: "Home"
+    "home": {
+    	"path": "/",
+    	"label": "Home"
     },
-    route-eight: {
-    	path: "/level-one/level-two/route-eight",
-    	label: "Rota 8"
+    "route-eight": {
+    	"path": "/level-one/level-two/route-eight",
+    	"label": "Rota 8"
     },
-    route-five: {
-    	path: "/level-one/route-five",
-    	label: "Rota 5"
+    "route-five": {
+    	"path": "/level-one/route-five",
+    	"label": "Rota 5"
     },
-    route-four: {
-    	path: "/level-one/route-four",
-    	label: "Rota 4"
+    "route-four": {
+    	"path": "/level-one/route-four",
+    	"label": "Rota 4"
     },
-    route-nine: {
-    	path: "/level-one/level-two/route-nine",
-    	label: "Rota 9"
+    "route-nine": {
+    	"path": "/level-one/level-two/route-nine",
+    	"label": "Rota 9"
     },
-    route-one: {
-    	path: "/route-one",
-    	label: "Rota 1"
+    "route-one": {
+    	"path": "/route-one",
+    	"label": "Rota 1"
     },
-    route-seven: {
-    	path: "/level-one/level-two/route-seven",
-    	label: "Rota 7"
+    "route-seven": {
+    	"path": "/level-one/level-two/route-seven",
+    	"label": "Rota 7"
     },
-    route-six: {
-    	path: "/level-one/route-six",
-    	label: "Rota 6"
+    "route-six": {
+    	"path": "/level-one/route-six",
+    	"label": "Rota 6"
     },
-    route-three: {
-    	path: "/route-three",
-    	label: "Rota 3"
+    "route-three": {
+    	"path": "/route-three",
+    	"label": "Rota 3"
     },
-    route-two: {
-    	path: "/route-two",
-    	label: "Rota 2"
+    "route-two": {
+    	"path": "/route-two",
+    	"label": "Rota 2"
     }
 }
 ```
