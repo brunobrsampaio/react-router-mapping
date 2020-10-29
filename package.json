@@ -12,7 +12,7 @@
 	"author": "Bruno Brienza Sampaio",
 	"license": "MIT",
 	"publishConfig": {
-		"registry": "https://npm.pkg.github.com/brunobrsampaio/"
+		"registry": "https://npm.pkg.github.com/"
 	},
 	"repository": {
 		"type" : "git",
