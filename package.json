@@ -1,5 +1,5 @@
 {
-	"name": "react-router-mapping",
+	"name": "@brunobrsampaio/react-router-mapping",
 	"version": "1.0.0",
 	"description": "Sistema para mapeamento, agrupamento e gerenciamento de rotas",
 	"main": "dist/index.cjs.js",
