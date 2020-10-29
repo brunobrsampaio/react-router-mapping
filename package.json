@@ -11,12 +11,9 @@
   },
   "author": "Bruno Brienza Sampaio <brunobrsampaio@gmail.com> (https://brunosampaio.dev/)",
   "license": "MIT",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brunobrsampaio/react-router-mapping.git"
+    "url": "https://github.com/brunobrsampaio/react-router-mapping.git"
   },
   "peerDependencies": {
     "react": "^16.13.1",
