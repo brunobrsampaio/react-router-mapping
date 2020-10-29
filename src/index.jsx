@@ -1,68 +1,113 @@
 /* eslint-disable react/prop-types */
 
-import React, { Children, isValidElement, cloneElement, createContext, useState, useContext, useEffect, memo, useMemo } from 'react';
+import React from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-const Context 		= createContext({});
+const Context 		= React.createContext({});
 const listRoutes 	= {};
 
 /**
  * Contexto do agrupador
  */
-const Mapping = ({ children }) => {
+class Mapping extends React.PureComponent {
 
-	const [ routes, setRoutes ] = useState({});
+	constructor (props) {
 
-	return (
-		<Context.Provider value={{ routes, setRoutes }}>
-			<Grouping>
-				{ children }	
-			</Grouping>
-		</Context.Provider>
-	);
-};
+		super(props);
+
+		this.state = {
+			routes : {}
+		};
+
+		this.update = (routes) => {
+
+			return this.setState({
+				...this.state.routes,
+				routes : routes
+			});
+		};
+	}
+
+	render () {
+
+		const { props, state, update } = this;
+		const { children }	= props;
+		const { routes } 	= state;
+
+		return (
+			<Context.Provider value={{ routes, update }}>
+				<Grouping>
+					{ children }
+				</Grouping>
+			</Context.Provider>
+		);
+	}
+}
 
 /**
  * Agrupador de rotas
  * 
  * @param {String} props.path - Caminho de prefixação usado nas rotas internas do agrupador 
  */
-const Grouping = memo(({ children, path }) => {
+class Grouping extends React.PureComponent {
 
-	const { setRoutes } = useContext(Context);
+	constructor (props) {
 
-	const groupPath = path;
+		super(props);
+	}
 
-	useEffect(() => {
+	static contextType = Context;
 
-		setRoutes(listRoutes);
-	}, []);
+	componentDidMount () {
 
-	return useMemo(() => Children.toArray(children).map((item) => {
-		
-		if (isValidElement(item)) {
+		const { update } = this.context;
 
-			const { props } = item;
-			const { path, label, name } = props;
-			
-			if (path) {
+		update(listRoutes);
+	}
 
-				const newPath = [ groupPath, path ].join('/').replace(/(\/+)/g, '/');
+	render () {
 
-				if (name) {
+		const { props } = this;
+		const { children, path } = props;
 
-					listRoutes[name] = !label ? newPath : {
-						path	: newPath,
-						label 	: label
-					};
+		const groupPath = path;
+
+		return React.Children.toArray(children).map((item, key) => {
+
+			if (React.isValidElement(item)) {
+
+				const { path, label, name, children } = item.props;
+
+				if (path) {
+
+					const newPath = [ groupPath, path ].join('/').replace(/(\/+)/g, '/');
+
+					if (name) {
+
+						listRoutes[name] = !label ? newPath : {
+							path	: newPath,
+							label 	: label
+						};
+					}
+
+					return React.cloneElement(item, { ...item.props, key, path : newPath });
 				}
 
-				return cloneElement(item, { ...props, path : newPath });
+				if (item.type.prototype instanceof React.Component) {
+					
+					return (
+						<Grouping key={key}>
+							{ children }
+						</Grouping>
+					);
+				}
 			}
-		}
-	}), []);
-});
+
+			return item;
+		});	
+	}
+}
 
 Grouping.propTypes = {
 	path : PropTypes.string
@@ -77,10 +122,10 @@ Grouping.defaultProps = {
  */
 const useRoute = () => {
 	
-	const { routes } = useContext(Context);
+	const { routes } = React.useContext(Context);
 
 	/**
-	 * Resgata uma listRoutesa de rotas ou uma rota em especifica se o arumento "name" for preenchido
+	 * Resgata uma rota em especifica quando o arumento "name" for informado
 	 * 
 	 * @param {String} name - Chave de identificação da rota
 	 * @param {Object} params - Objeto de parâmetros para substituição nas rotas
@@ -89,12 +134,17 @@ const useRoute = () => {
 
 		if (!name) {
 
-			return routes;
+			throw '\'Name\' argument not reported';
 		}
 
 		if (Object.keys(routes).length) {
 
 			const location = routes[name];
+
+			if (!location) {
+
+				return '';
+			}
 
 			const { path } = location;
 	
@@ -118,19 +168,28 @@ const useRoute = () => {
 		return '';
 	};
 
+	/**
+	 * Lista todas as rotas da aplicação
+	 */
+	const all = () => {
+
+		return routes;
+	};
+
 	return {
-		route
+		route,
+		all
 	};
 };
 
 /**
  * Hook customizado para o usuo de um bread crumb em conjunto com o mapeador
  */
-const useBreadCrumb = () => {
+const useBreadcrumb = () => {
 	
-	const { routes } = useContext(Context);
+	const { routes } = React.useContext(Context);
 	const { pathname } = useLocation();
-	const breadCrumb = [];
+	const breadcrumb = [];
 
 	for (const route in routes) {
 
@@ -144,12 +203,12 @@ const useBreadCrumb = () => {
 
 			const { url } = match;
 
-			breadCrumb.push({ url, label });
+			breadcrumb.push({ url, label });
 		}
 	}
 
 	return {
-		breadCrumb
+		breadcrumb
 	};
 };
 
@@ -157,5 +216,5 @@ export {
 	Mapping,
 	Grouping,
 	useRoute,
-	useBreadCrumb
+	useBreadcrumb
 };
