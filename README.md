@@ -2,14 +2,6 @@
 
 Esta biblioteca tem como finalidade auxiliar os desenvolvedores a terem uma melhor forma de mapear, agrupar e gerenciar as rotas de suas aplicações.
 
-# Pré requisitos
-
-> react@^16.13.1
-
-> react-dom@^16.13.1
-
-> react-router-dom@^5.2.0
-
 # Antes de começar
 
 Esta biblioteca trabalha em conjunto com a [React Router](https://reactrouter.com/web/guides/quick-start), utilizando certas funcionalidades que não teriam necessidade de serem reescritas. Sendo assim leiam, com atenção cada seção desse documento.
