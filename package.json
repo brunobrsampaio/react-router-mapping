@@ -1,24 +1,18 @@
 {
   "name": "react-router-mapping",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sistema para mapeamento, agrupamento e gerenciamento de rotas",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "scripts": {
     "watch": "rollup -c -w",
-    "build": "rollup -c",
-    "postinstall": "rm -rf node_modules"
+    "build": "rollup -c"
   },
   "author": "Bruno Brienza Sampaio <brunobrsampaio@gmail.com> (https://brunosampaio.dev/)",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/brunobrsampaio/react-router-mapping.git"
-  },
-  "peerDependencies": {
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -33,10 +27,6 @@
     "eslint": "^7.9.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-react": "^7.21.2",
-    "prop-types": "^15.7.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-router-dom": "^5.2.0",
     "rollup": "^2.28.2",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-eslint": "^7.0.0",
@@ -49,5 +39,11 @@
     "url": "https://github.com/brunobrsampaio/react-router-mapping/issues"
   },
   "homepage": "https://github.com/brunobrsampaio/react-router-mapping#readme",
-  "dependencies": {}
+  "dependencies": {
+	"invariant": "^2.2.4",
+    "prop-types": "^15.7.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+  }
 }

@@ -3,8 +3,9 @@
 import React from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import invariant from 'invariant';
 
-const Context 		= React.createContext({});
+const Context 		= React.createContext(false);
 const listRoutes 	= {};
 
 /**
@@ -73,39 +74,39 @@ class Grouping extends React.PureComponent {
 
 		const groupPath = path;
 
-		return React.Children.toArray(children).map((item, key) => {
+		return (
+			<Context.Consumer>
+				{(context) => {
 
-			if (React.isValidElement(item)) {
+					invariant(context, 'You should not use <Grouping> outside a <Mapping>');
 
-				const { path, label, name, children } = item.props;
+					return React.Children.toArray(children).map((item, key) => {
 
-				if (path) {
+						if (React.isValidElement(item)) {
 
-					const newPath = [ groupPath, path ].join('/').replace(/(\/+)/g, '/');
+							const { path, label, name } = item.props;
 
-					if (name) {
+							if (path) {
 
-						listRoutes[name] = !label ? newPath : {
-							path	: newPath,
-							label 	: label
-						};
-					}
+								const newPath = [ groupPath, path ].join('/').replace(/(\/+)/g, '/');
 
-					return React.cloneElement(item, { ...item.props, key, path : newPath });
-				}
+								if (name) {
 
-				if (item.type.prototype instanceof React.Component) {
-					
-					return (
-						<Grouping key={key}>
-							{ children }
-						</Grouping>
-					);
-				}
-			}
+									listRoutes[name] = !label ? newPath : {
+										path	: newPath,
+										label 	: label
+									};
+								}
 
-			return item;
-		});	
+								return React.cloneElement(item, { ...item.props, key, path : newPath });
+							}
+						}
+
+						return item;
+					});	
+				}}
+			</Context.Consumer>
+		);
 	}
 }
 
