@@ -9,7 +9,7 @@ Esta biblioteca trabalha em conjunto com a [React Router](https://reactrouter.co
 # Instalação
 
 ```sh
-npm install react-route-mapping
+npm install react-router-mapping
 ```
 
 # Modo de uso
