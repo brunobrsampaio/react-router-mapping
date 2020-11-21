@@ -1438,13 +1438,11 @@ var useRoute = function useRoute() {
         return '';
       }
 
-      var path = location.path;
+      var pathname = location;
 
-      if (!path) {
-        return '';
+      if (location.path) {
+        pathname = location.path;
       }
-
-      var pathname = path || location;
 
       for (var param in params) {
         var regExp = new RegExp("(\\:".concat(param, "\\??)"), 'g');

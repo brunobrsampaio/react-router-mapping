@@ -147,14 +147,12 @@ const useRoute = () => {
 				return '';
 			}
 
-			const { path } = location;
+			let pathname = location;
 	
-			if (!path) {
+			if (location.path) {
 	
-				return '';
+				pathname = location.path;
 			}
-	
-			let pathname = path || location;
 	
 			for (const param in params) {
 	
