@@ -106,7 +106,7 @@ Este método retorna uma lista com todas as rotas que a aplicação possui, exem
 
 ```javascript
 import { useEffect } from 'react';
-import { useRoute } from 'react-router-group';
+import { useRoute } from 'react-router-mapping';
 
 export default () => {
 
@@ -191,7 +191,7 @@ Esse método possui 2 (duas) funcionalidades distintas, a primeira seria passand
 
 ```javascript
 import { useEffect } from 'react';
-import { useRoute } from 'react-router-group';
+import { useRoute } from 'react-router-mapping';
 
 export default () => {
 
@@ -220,7 +220,7 @@ A segunda e última funcionalidade, seria um complemento para parâmetros dinâm
 
 ```javascript
 import { useEffect } from 'react';
-import { useRoute } from 'react-router-group';
+import { useRoute } from 'react-router-mapping';
 
 export default () => {
 
@@ -245,7 +245,7 @@ Como o prórpio nome diz, esse é um hook para breadcrump, sem muito segredo, o 
 
 ```javascript
 import { useEffect } from 'react';
-import { useBreadcrumb } from 'react-router-group';
+import { useBreadcrumb } from 'react-router-mapping';
 
 export default () => {
 
