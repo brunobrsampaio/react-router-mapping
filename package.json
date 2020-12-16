@@ -15,12 +15,12 @@
     "url": "https://github.com/brunobrsampaio/react-router-mapping.git"
   },
   "keywords": [
-	  "react",
-	  "react-router",
-	  "mapping",
-	  "map",
-	  "group",
-	  "grouping"
+    "react",
+    "react-router",
+    "mapping",
+    "map",
+    "group",
+    "grouping"
   ],
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -48,7 +48,7 @@
   },
   "homepage": "https://github.com/brunobrsampaio/react-router-mapping#readme",
   "dependencies": {
-	"invariant": "^2.2.4",
+    "invariant": "^2.2.4",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

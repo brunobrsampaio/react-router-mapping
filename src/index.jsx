@@ -1,114 +1,79 @@
 /* eslint-disable react/prop-types */
 
-import React from 'react';
+import React, { createContext, useContext, useState, useEffect, memo } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import invariant from 'invariant';
 
-const Context 		= React.createContext(false);
+const Context 		= createContext(false);
 const listRoutes 	= {};
 
 /**
  * Contexto do agrupador
  */
-class Mapping extends React.PureComponent {
+const Mapping = memo(({ children }) => {
 
-	constructor (props) {
+	const [ routes, setRoutes ] = useState({});
 
-		super(props);
-
-		this.state = {
-			routes : {}
-		};
-
-		this.update = (routes) => {
-
-			return this.setState({
-				...this.state.routes,
-				routes : routes
-			});
-		};
-	}
-
-	render () {
-
-		const { props, state, update } = this;
-		const { children }	= props;
-		const { routes } 	= state;
-
-		return (
-			<Context.Provider value={{ routes, update }}>
-				<Grouping>
-					{ children }
-				</Grouping>
-			</Context.Provider>
-		);
-	}
-}
+	return (
+		<Context.Provider value={{ routes, setRoutes }}>
+			<Grouping>
+				{ children }
+			</Grouping>
+		</Context.Provider>
+	);
+});
 
 /**
  * Agrupador de rotas
  * 
  * @param {String} props.path - Caminho de prefixação usado nas rotas internas do agrupador 
  */
-class Grouping extends React.PureComponent {
+const  Grouping = memo(({ children, path }) => {
 
-	constructor (props) {
+	const { setRoutes } = useContext(Context);
+	
+	const groupPath = path;
 
-		super(props);
-	}
+	useEffect(() => {
 
-	static contextType = Context;
+		setRoutes(listRoutes);
+	}, []);
 
-	componentDidMount () {
+	return (
+		<Context.Consumer>
+			{(context) => {
 
-		const { update } = this.context;
+				invariant(context, 'You should not use <Grouping> outside a <Mapping>');
 
-		update(listRoutes);
-	}
+				return React.Children.toArray(children).map((item, key) => {
 
-	render () {
+					if (React.isValidElement(item)) {
 
-		const { props } = this;
-		const { children, path } = props;
+						const { path, label, name } = item.props;
 
-		const groupPath = path;
+						if (path) {
 
-		return (
-			<Context.Consumer>
-				{(context) => {
+							const newPath = [ groupPath, path ].join('/').replace(/(\/+)/g, '/');
 
-					invariant(context, 'You should not use <Grouping> outside a <Mapping>');
+							if (name) {
 
-					return React.Children.toArray(children).map((item, key) => {
-
-						if (React.isValidElement(item)) {
-
-							const { path, label, name } = item.props;
-
-							if (path) {
-
-								const newPath = [ groupPath, path ].join('/').replace(/(\/+)/g, '/');
-
-								if (name) {
-
-									listRoutes[name] = !label ? newPath : {
-										path	: newPath,
-										label 	: label
-									};
-								}
-
-								return React.cloneElement(item, { ...item.props, key, path : newPath });
+								listRoutes[name] = !label ? newPath : {
+									path	: newPath,
+									label 	: label
+								};
 							}
-						}
 
-						return item;
-					});	
-				}}
-			</Context.Consumer>
-		);
-	}
-}
+							return React.cloneElement(item, { ...item.props, key, path : newPath });
+						}
+					}
+
+					return item;
+				});	
+			}}
+		</Context.Consumer>
+	);
+});
 
 Grouping.propTypes = {
 	path : PropTypes.string
@@ -123,7 +88,9 @@ Grouping.defaultProps = {
  */
 const useRoute = () => {
 	
-	const { routes } = React.useContext(Context);
+	const { routes } = useContext(Context);
+
+	const lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
 
 	/**
 	 * Resgata uma rota em especifica quando o arumento "name" for informado
@@ -160,8 +127,8 @@ const useRoute = () => {
 	
 				pathname = pathname.replace(regExp, params[param]);
 			}
-	
-			return pathname;
+
+			return pathname.replace(lastParamExp, '');
 		}
 
 		return '';
@@ -171,6 +138,20 @@ const useRoute = () => {
 	 * Lista todas as rotas da aplicação
 	 */
 	const all = () => {
+
+		for (var route in routes) {
+
+			if (routes[route] instanceof Object) {
+
+				if (routes[route].path) {
+					
+					routes[route].path = routes[route].path.replace(lastParamExp, '');
+				}
+			} else {
+
+				routes[route] = routes[route].replace(lastParamExp, '');
+			}
+		}
 
 		return routes;
 	};
@@ -186,9 +167,9 @@ const useRoute = () => {
  */
 const useBreadcrumb = () => {
 	
-	const { routes } = React.useContext(Context);
-	const { pathname } = useLocation();
-	const breadcrumb = [];
+	const { routes } 	= useContext(Context);
+	const { pathname } 	= useLocation();
+	const breadcrumb 	= [];
 
 	for (const route in routes) {
 

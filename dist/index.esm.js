@@ -1,27 +1,5 @@
-import React from 'react';
+import React, { memo, useState, useContext, useEffect, createContext } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -72,83 +50,60 @@ function _objectSpread2(target) {
   return target;
 }
 
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function");
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) _setPrototypeOf(subClass, superClass);
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
 }
 
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-
-  return _setPrototypeOf(o, p);
-}
-
-function _isNativeReflectConstruct() {
-  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-  if (Reflect.construct.sham) return false;
-  if (typeof Proxy === "function") return true;
+function _iterableToArrayLimit(arr, i) {
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
 
   try {
-    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
 
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (call && (typeof call === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _createSuper(Derived) {
-  var hasNativeReflectConstruct = _isNativeReflectConstruct();
-
-  return function _createSuperInternal() {
-    var Super = _getPrototypeOf(Derived),
-        result;
-
-    if (hasNativeReflectConstruct) {
-      var NewTarget = _getPrototypeOf(this).constructor;
-
-      result = Reflect.construct(Super, arguments, NewTarget);
-    } else {
-      result = Super.apply(this, arguments);
+      if (i && _arr.length === i) break;
     }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
 
-    return _possibleConstructorReturn(this, result);
-  };
+  return _arr;
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 function createCommonjsModule(fn, basedir, module) {
@@ -1288,123 +1243,74 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 var invariant_1 = invariant;
 
-var Context = /*#__PURE__*/React.createContext(false);
+var Context = /*#__PURE__*/createContext(false);
 var listRoutes = {};
 /**
  * Contexto do agrupador
  */
 
-var Mapping = /*#__PURE__*/function (_React$PureComponent) {
-  _inherits(Mapping, _React$PureComponent);
+var Mapping = /*#__PURE__*/memo(function (_ref) {
+  var children = _ref.children;
 
-  var _super = _createSuper(Mapping);
+  var _useState = useState({}),
+      _useState2 = _slicedToArray(_useState, 2),
+      routes = _useState2[0],
+      setRoutes = _useState2[1];
 
-  function Mapping(props) {
-    var _this;
-
-    _classCallCheck(this, Mapping);
-
-    _this = _super.call(this, props);
-    _this.state = {
-      routes: {}
-    };
-
-    _this.update = function (routes) {
-      return _this.setState(_objectSpread2(_objectSpread2({}, _this.state.routes), {}, {
-        routes: routes
-      }));
-    };
-
-    return _this;
-  }
-
-  _createClass(Mapping, [{
-    key: "render",
-    value: function render() {
-      var props = this.props,
-          state = this.state,
-          update = this.update;
-      var children = props.children;
-      var routes = state.routes;
-      return /*#__PURE__*/React.createElement(Context.Provider, {
-        value: {
-          routes: routes,
-          update: update
-        }
-      }, /*#__PURE__*/React.createElement(Grouping, null, children));
+  return /*#__PURE__*/React.createElement(Context.Provider, {
+    value: {
+      routes: routes,
+      setRoutes: setRoutes
     }
-  }]);
-
-  return Mapping;
-}(React.PureComponent);
+  }, /*#__PURE__*/React.createElement(Grouping, null, children));
+});
 /**
  * Agrupador de rotas
  * 
  * @param {String} props.path - Caminho de prefixação usado nas rotas internas do agrupador 
  */
 
+var Grouping = /*#__PURE__*/memo(function (_ref2) {
+  var children = _ref2.children,
+      path = _ref2.path;
 
-var Grouping = /*#__PURE__*/function (_React$PureComponent2) {
-  _inherits(Grouping, _React$PureComponent2);
+  var _useContext = useContext(Context),
+      setRoutes = _useContext.setRoutes;
 
-  var _super2 = _createSuper(Grouping);
+  var groupPath = path;
+  useEffect(function () {
+    setRoutes(listRoutes);
+  }, []);
+  return /*#__PURE__*/React.createElement(Context.Consumer, null, function (context) {
+    invariant_1(context, 'You should not use <Grouping> outside a <Mapping>');
+    return React.Children.toArray(children).map(function (item, key) {
+      if ( /*#__PURE__*/React.isValidElement(item)) {
+        var _item$props = item.props,
+            _path = _item$props.path,
+            label = _item$props.label,
+            name = _item$props.name;
 
-  function Grouping(props) {
-    _classCallCheck(this, Grouping);
+        if (_path) {
+          var newPath = [groupPath, _path].join('/').replace(/(\/+)/g, '/');
 
-    return _super2.call(this, props);
-  }
-
-  _createClass(Grouping, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      var update = this.context.update;
-      update(listRoutes);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var props = this.props;
-      var children = props.children,
-          path = props.path;
-      var groupPath = path;
-      return /*#__PURE__*/React.createElement(Context.Consumer, null, function (context) {
-        invariant_1(context, 'You should not use <Grouping> outside a <Mapping>');
-        return React.Children.toArray(children).map(function (item, key) {
-          if ( /*#__PURE__*/React.isValidElement(item)) {
-            var _item$props = item.props,
-                _path = _item$props.path,
-                label = _item$props.label,
-                name = _item$props.name;
-
-            if (_path) {
-              var newPath = [groupPath, _path].join('/').replace(/(\/+)/g, '/');
-
-              if (name) {
-                listRoutes[name] = !label ? newPath : {
-                  path: newPath,
-                  label: label
-                };
-              }
-
-              return /*#__PURE__*/React.cloneElement(item, _objectSpread2(_objectSpread2({}, item.props), {}, {
-                key: key,
-                path: newPath
-              }));
-            }
+          if (name) {
+            listRoutes[name] = !label ? newPath : {
+              path: newPath,
+              label: label
+            };
           }
 
-          return item;
-        });
-      });
-    }
-  }]);
+          return /*#__PURE__*/React.cloneElement(item, _objectSpread2(_objectSpread2({}, item.props), {}, {
+            key: key,
+            path: newPath
+          }));
+        }
+      }
 
-  return Grouping;
-}(React.PureComponent);
-
-_defineProperty(Grouping, "contextType", Context);
-
+      return item;
+    });
+  });
+});
 Grouping.propTypes = {
   path: propTypes.string
 };
@@ -1416,15 +1322,16 @@ Grouping.defaultProps = {
  */
 
 var useRoute = function useRoute() {
-  var _React$useContext = React.useContext(Context),
-      routes = _React$useContext.routes;
+  var _useContext2 = useContext(Context),
+      routes = _useContext2.routes;
+
+  var lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
   /**
    * Resgata uma rota em especifica quando o arumento "name" for informado
    * 
    * @param {String} name - Chave de identificação da rota
    * @param {Object} params - Objeto de parâmetros para substituição nas rotas
    */
-
 
   var route = function route(name, params) {
     if (!name) {
@@ -1449,7 +1356,7 @@ var useRoute = function useRoute() {
         pathname = pathname.replace(regExp, params[param]);
       }
 
-      return pathname;
+      return pathname.replace(lastParamExp, '');
     }
 
     return '';
@@ -1460,6 +1367,16 @@ var useRoute = function useRoute() {
 
 
   var all = function all() {
+    for (var route in routes) {
+      if (routes[route] instanceof Object) {
+        if (routes[route].path) {
+          routes[route].path = routes[route].path.replace(lastParamExp, '');
+        }
+      } else {
+        routes[route] = routes[route].replace(lastParamExp, '');
+      }
+    }
+
     return routes;
   };
 
@@ -1474,8 +1391,8 @@ var useRoute = function useRoute() {
 
 
 var useBreadcrumb = function useBreadcrumb() {
-  var _React$useContext2 = React.useContext(Context),
-      routes = _React$useContext2.routes;
+  var _useContext3 = useContext(Context),
+      routes = _useContext3.routes;
 
   var _useLocation = useLocation(),
       pathname = _useLocation.pathname;
