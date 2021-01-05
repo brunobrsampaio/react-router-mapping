@@ -14,7 +14,7 @@ npm install react-router-mapping
 
 # Modo de uso
 
-```javascript
+```jsx
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { Mapping, Grouping } from 'react-router-mapping';
 
@@ -28,7 +28,7 @@ export default () => {
           <Route exact name="route-one" label="Route One" path="/route-one" component={Component1} />
           <Route exact name="route-two" label="Route Two" path="/route-two" component={Component2} />
           <Route exact name="route-three" label="Route Three" path="/route-three" component={Component3} />
-          <Grouping path="level-one">
+          <Grouping prefix="level-one">
             <Route exact name="route-four" label="Route Four" path="/route-four" render={() => {
 							
               return <Component4 />
@@ -41,7 +41,7 @@ export default () => {
 							
               return <Component6 />
             }} />
-            <Grouping path="level-two">
+            <Grouping prefix="level-two">
               <Route exact name="route-seven" label="Route Seven" path="/route-seven">
                 <Component7 />
               </Route>
@@ -68,12 +68,12 @@ Responsável pelo contexto funcional da biblioteca, sem ele, toda e qualquer out
 
 ## **`Grouping`**
 
-O `Grouping` realiza o aninhamento das rotas em seu contexto. Ele recebe uma única propriedade, `path` sendo um valor `string` de um prefixo para todas as rotas em seu contexto. Isso auxilia o desenvolvedor a não ter redundâcia em novas rotas. O componente também permite a utilização do mesmo como próprio filho em seu contexto, assim sendo possível realizar vários aninhamentos para rotas e rotas filhas, exemplo:
+O `Grouping` realiza o aninhamento das rotas em seu contexto. Ele recebe uma única propriedade, `prefix` sendo um valor `string` de um prefixo para todas as rotas em seu contexto. Isso auxilia o desenvolvedor a não ter redundâcia em novas rotas. O componente também permite a utilização do mesmo como próprio filho em seu contexto, assim sendo possível realizar vários aninhamentos para rotas e rotas filhas, exemplo:
 
-```html
-<Grouping path="level-one">
+```jsx
+<Grouping prefix="level-one">
   <Route path="/route-four" component={Component4} />
-  <Grouping path="level-two">
+  <Grouping prefix="level-two">
     <Route path="/route-seven" component={Component7} />
   </Grouping>
 </Grouping>
@@ -83,7 +83,7 @@ O `Grouping` realiza o aninhamento das rotas em seu contexto. Ele recebe uma ún
 
 Este componente não faz parte da biblioteca em si e sim do [React Router](https://reactrouter.com/web/guides/quick-start). O que fazemos é apenas um incremento de 2 (duas) propriedades, para que o componente `Route` trabalhe em conjunto com a biblioteca. Sendo elas `name` e `label`, exemplo:
 
-```html
+```jsx
 <Route name="home" label="Home" path="/" component={Home} />
 ```
 
@@ -104,7 +104,7 @@ O `useRoute` é o hook responsável por lhe permitir acessar o objeto de rotas g
 
 Este método retorna uma lista com todas as rotas que a aplicação possui, exemplo:
 
-```javascript
+```jsx
 import { useEffect } from 'react';
 import { useRoute } from 'react-router-mapping';
 
@@ -189,7 +189,7 @@ Agora, caso seja utilizado a propriedade `label` em conjunto, teremos um retorno
 
 Esse método possui 2 (duas) funcionalidades distintas, a primeira seria passando um valor para o primeiro argumento `name`, veja abaixo um exemplo prático:
 
-```javascript
+```jsx
 import { useEffect } from 'react';
 import { useRoute } from 'react-router-mapping';
 
@@ -212,13 +212,13 @@ export default () => {
 
 A segunda e última funcionalidade, seria um complemento para parâmetros dinâmicos na rota, para realizar uma substituição de valores nas rotas, basta utilizar o segundo argumento `params` como um objeto e colocar a propriedade com o nome do parâmetro desejável e seu respectivo valor, veja o exemplo:
 
-```html
-<Grouping path="level-one">
+```jsx
+<Grouping prefix="level-one">
   <Route path="/route-four/:id" component={Component4} />
 </Grouping>
 ```
 
-```javascript
+```jsx
 import { useEffect } from 'react';
 import { useRoute } from 'react-router-mapping';
 
@@ -243,7 +243,7 @@ export default () => {
 
 Como o prórpio nome diz, esse é um hook para breadcrump, sem muito segredo, o mesmo nos retorna uma propriedade chamada `breadcrumb` com um array de objetos, contendo o caminho completo da localização do usuário na aplicação, um exemplo prático, digamos que o usuário se encontra na Rota 9:
 
-```javascript
+```jsx
 import { useEffect } from 'react';
 import { useBreadcrumb } from 'react-router-mapping';
 

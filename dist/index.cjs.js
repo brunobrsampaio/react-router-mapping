@@ -1275,17 +1275,16 @@ var Mapping = /*#__PURE__*/React.memo(function (_ref) {
 /**
  * Agrupador de rotas
  * 
- * @param {String} props.path - Caminho de prefixação usado nas rotas internas do agrupador 
+ * @param {String} props.prefix - Caminho de prefixação usado nas rotas internas do agrupador 
  */
 
 var Grouping = /*#__PURE__*/React.memo(function (_ref2) {
   var children = _ref2.children,
-      path = _ref2.path;
+      prefix = _ref2.prefix;
 
   var _useContext = React.useContext(Context),
       setRoutes = _useContext.setRoutes;
 
-  var groupPath = path;
   React.useEffect(function () {
     setRoutes(listRoutes);
   }, []);
@@ -1294,12 +1293,12 @@ var Grouping = /*#__PURE__*/React.memo(function (_ref2) {
     return React__default['default'].Children.toArray(children).map(function (item, key) {
       if ( /*#__PURE__*/React__default['default'].isValidElement(item)) {
         var _item$props = item.props,
-            _path = _item$props.path,
+            path = _item$props.path,
             label = _item$props.label,
             name = _item$props.name;
 
-        if (_path) {
-          var newPath = [groupPath, _path].join('/').replace(/(\/+)/g, '/');
+        if (path) {
+          var newPath = ["/".concat(prefix), path].join('/').replace(/(\/+)/g, '/');
 
           if (name) {
             listRoutes[name] = !label ? newPath : {
@@ -1320,10 +1319,10 @@ var Grouping = /*#__PURE__*/React.memo(function (_ref2) {
   });
 });
 Grouping.propTypes = {
-  path: propTypes.string
+  prefix: propTypes.string
 };
 Grouping.defaultProps = {
-  path: ''
+  prefix: ''
 };
 /**
  * Hook customizado para uso das rotas mapeadas

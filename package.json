@@ -1,7 +1,7 @@
 {
   "name": "react-router-mapping",
-  "version": "1.0.4",
-  "description": "Sistema para mapeamento, agrupamento e gerenciamento de rotas",
+  "version": "1.0.5",
+  "description": "Biblioteca para mapeamento, agrupamento e gerenciamento de rotas",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "scripts": {
@@ -22,6 +22,11 @@
     "group",
     "grouping"
   ],
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-router-dom": "^5.0.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
@@ -35,6 +40,11 @@
     "eslint": "^7.9.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-react": "^7.21.2",
+    "invariant": "^2.2.4",
+    "prop-types": "^15.7.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
     "rollup": "^2.28.2",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-eslint": "^7.0.0",
@@ -46,12 +56,5 @@
   "bugs": {
     "url": "https://github.com/brunobrsampaio/react-router-mapping/issues"
   },
-  "homepage": "https://github.com/brunobrsampaio/react-router-mapping#readme",
-  "dependencies": {
-    "invariant": "^2.2.4",
-    "prop-types": "^15.7.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-router-dom": "^5.2.0"
-  }
+  "homepage": "https://github.com/brunobrsampaio/react-router-mapping#readme"
 }

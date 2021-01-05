@@ -27,13 +27,11 @@ const Mapping = memo(({ children }) => {
 /**
  * Agrupador de rotas
  * 
- * @param {String} props.path - Caminho de prefixação usado nas rotas internas do agrupador 
+ * @param {String} props.prefix - Caminho de prefixação usado nas rotas internas do agrupador 
  */
-const  Grouping = memo(({ children, path }) => {
+const  Grouping = memo(({ children, prefix }) => {
 
 	const { setRoutes } = useContext(Context);
-	
-	const groupPath = path;
 
 	useEffect(() => {
 
@@ -54,7 +52,7 @@ const  Grouping = memo(({ children, path }) => {
 
 						if (path) {
 
-							const newPath = [ groupPath, path ].join('/').replace(/(\/+)/g, '/');
+							const newPath = [ `/${prefix}`, path ].join('/').replace(/(\/+)/g, '/');
 
 							if (name) {
 
@@ -76,11 +74,11 @@ const  Grouping = memo(({ children, path }) => {
 });
 
 Grouping.propTypes = {
-	path : PropTypes.string
+	prefix : PropTypes.string
 };
 
 Grouping.defaultProps = {
-	path : ''
+	prefix : ''
 };
 
 /**
