@@ -66,7 +66,7 @@ const  Grouping = memo(({ children, prefix }) => {
 						}
 					}
 
-					return item;
+					return !prefix ? item : React.cloneElement(item, { ...item.props, prefix : `${prefix}/${item.props.prefix}` });
 				});	
 			}}
 		</Context.Consumer>

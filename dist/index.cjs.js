@@ -1314,7 +1314,9 @@ var Grouping = /*#__PURE__*/React.memo(function (_ref2) {
         }
       }
 
-      return item;
+      return !prefix ? item : /*#__PURE__*/React__default['default'].cloneElement(item, _objectSpread2(_objectSpread2({}, item.props), {}, {
+        prefix: "".concat(prefix, "/").concat(item.props.prefix)
+      }));
     });
   });
 });
