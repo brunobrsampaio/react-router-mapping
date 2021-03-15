@@ -6,6 +6,8 @@ Esta biblioteca tem como finalidade auxiliar os desenvolvedores a terem uma melh
 
 Esta biblioteca trabalha em conjunto com a [React Router](https://reactrouter.com/web/guides/quick-start), utilizando certas funcionalidades que não teriam necessidade de serem reescritas. Sendo assim leiam, com atenção cada seção desse documento.
 
+Existe um componente em específico da biblioteca [React Router](https://reactrouter.com/web/guides/quick-start) que é aconselhável não utilizar, esse seria `Switch`. Este componente realiza a renderização do primeiro componente `Route` encontrado como filho, sendo assim, todo armazenamento das rotas restantes podem ser afetadas e consequentemente não armazenadas para listagens futuras.
+
 # Instalação
 
 ```sh
@@ -22,39 +24,38 @@ export default () => {
 		
   return (
     <BrowserRouter>
-      <Switch>
-        <Mapping>
-          <MapRoute exact name="home" label="Home"  path="/" component={Home} />
-          <MapRoute exact name="route-one" label="Route One" path="/route-one" component={Component1} />
-          <MapRoute exact name="route-two" label="Route Two" path="/route-two" component={Component2} />
-          <MapRoute exact name="route-three" label="Route Three" path="/route-three" component={Component3} />
-          <Grouping prefix="level-one">
-            <MapRoute exact name="route-four" label="Route Four" path="/route-four" render={() => {
+      <Mapping notFoundRedirect="/404">
+        <MapRoute exact name="home" label="Home"  path="/" component={Home} />
+        <MapRoute exact name="route-one" label="Route One" path="/route-one" component={Component1} />
+        <MapRoute exact name="route-two" label="Route Two" path="/route-two" component={Component2} />
+        <MapRoute exact name="route-three" label="Route Three" path="/route-three" component={Component3} />
+        <Grouping prefix="level-one">
+          <MapRoute exact name="route-four" label="Route Four" path="/route-four" render={() => {
 							
-              return <Component4 />
-            }} />
-            <MapRoute exact name="route-five" label="Route Five" path="/route-five" render={() => {
+            return <Component4 />
+          }} />
+          <MapRoute exact name="route-five" label="Route Five" path="/route-five" render={() => {
 							
-              return <Component5 />
-            }} />
-            <MapRoute exact name="route-six" label="Route Six" path="/route-six" render={() => {
+            return <Component5 />
+          }} />
+          <MapRoute exact name="route-six" label="Route Six" path="/route-six" render={() => {
 							
-              return <Component6 />
-            }} />
-            <Grouping prefix="level-two">
-              <MapRoute exact name="route-seven" label="Route Seven" path="/route-seven">
-                <Component7 />
-              </MapRoute>
-              <MapRoute exact name="route-eight" label="Route Eight" path="/route-eight">
-                <Component8 />
-              </MapRoute>
-              <MapRoute exact name="route-nine" label="Route Nine" path="/route-nine">
-                <Component9 />
-              </MapRoute>
-            </Grouping>
+            return <Component6 />
+          }} />
+          <Grouping prefix="level-two">
+            <MapRoute exact name="route-seven" label="Route Seven" path="/route-seven">
+              <Component7 />
+            </MapRoute>
+            <MapRoute exact name="route-eight" label="Route Eight" path="/route-eight">
+              <Component8 />
+            </MapRoute>
+            <MapRoute exact name="route-nine" label="Route Nine" path="/route-nine">
+              <Component9 />
+            </MapRoute>
           </Grouping>
-        </Mapping>
-      </Switch>
+        </Grouping>
+		<MapRoute exact name="not-found" label="Not Found" path="/404" component={Component3} />
+      </Mapping>
     </BrowserRouter>
   );
 };
@@ -65,6 +66,12 @@ export default () => {
 ## **`Mapping`** (Obrigátorio)
 
 Responsável pelo contexto funcional da biblioteca, sem ele, toda e qualquer outra funcionalidade será inválida.
+
+### Propriedades
+
+| Propriedade | Tipo | Descrição | Padrão |
+| ------ | ------ | ------ | ------ |
+| notFoundRedirect | **String** | Valor da rota responsável por renderizar a página 404 na aplicação | **Vázio** | 
 
 ## **`Grouping`**
 

@@ -1329,20 +1329,45 @@ var GroupingContext = /*#__PURE__*/React.createContext({
 });
 GroupingContext.displayName = 'GroupingContext';
 var listRoutes = {};
+var currentRoute = '';
 /**
  * Contexto do agrupador
  */
 
 var Mapping = /*#__PURE__*/React.memo(function (_ref) {
-  var children = _ref.children;
+  var children = _ref.children,
+      notFoundRedirect = _ref.notFoundRedirect;
 
   var _useState = React.useState({}),
       _useState2 = _slicedToArray(_useState, 2),
       routes = _useState2[0],
       setRoutes = _useState2[1];
 
+  var _useLocation = reactRouterDom.useLocation(),
+      pathname = _useLocation.pathname;
+
+  var _useHistory = reactRouterDom.useHistory(),
+      push = _useHistory.push;
+  /**
+   * Verifica se a rota informada, é igual a atual na listagem de rotas
+   */
+
+
+  var redirect = function redirect() {
+    if (notFoundRedirect) {
+      var match = reactRouterDom.matchPath(pathname, {
+        path: currentRoute
+      });
+
+      if (!match.isExact) {
+        push(notFoundRedirect);
+      }
+    }
+  };
+
   React.useEffect(function () {
     setRoutes(listRoutes);
+    redirect();
   }, []);
   return /*#__PURE__*/React__default['default'].createElement(MappingContext.Provider, {
     value: {
@@ -1350,6 +1375,12 @@ var Mapping = /*#__PURE__*/React.memo(function (_ref) {
     }
   }, /*#__PURE__*/React__default['default'].createElement(Grouping, null, children));
 });
+Mapping.propTypes = {
+  /**
+   * Caso a rota informada na URL não exista, o valor dessa propriedade deve ser utilizado para um redirecionamento
+   */
+  notFoundRedirect: propTypes.string
+};
 /**
  * Agrupador de rotas
  */
@@ -1408,6 +1439,8 @@ var MapRoute = function MapRoute(_ref3) {
     return /*#__PURE__*/React__default['default'].createElement(Component, _extends({}, rest, {
       path: path,
       render: function render() {
+        currentRoute = path;
+
         if (children) {
           return children;
         }
@@ -1513,8 +1546,8 @@ var useBreadcrumb = function useBreadcrumb() {
   var _useContext3 = React.useContext(MappingContext),
       routes = _useContext3.routes;
 
-  var _useLocation = reactRouterDom.useLocation(),
-      pathname = _useLocation.pathname;
+  var _useLocation2 = reactRouterDom.useLocation(),
+      pathname = _useLocation2.pathname;
 
   var breadcrumb = [];
 

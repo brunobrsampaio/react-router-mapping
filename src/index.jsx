@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, memo, useEffect } from 'react';
-import { matchPath, useLocation, Route } from 'react-router-dom';
+import { matchPath, useLocation, useHistory, Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import invariant from 'invariant';
 
@@ -10,17 +10,38 @@ const GroupingContext		= createContext({ prefixes : [], prefix : '' });
 GroupingContext.displayName = 'GroupingContext';
 
 const listRoutes	= {};
+let currentRoute	= '';
 
 /**
  * Contexto do agrupador
  */
-const Mapping = memo(({ children }) => {
+const Mapping = memo(({ children, notFoundRedirect }) => {
 
 	const [ routes, setRoutes ] = useState({});
+	const { pathname } 	= useLocation();
+	const { push } = useHistory();
+
+	/**
+	 * Verifica se a rota informada, é igual a atual na listagem de rotas
+	 */
+	const redirect = () => {
+
+		if (notFoundRedirect) {
+			
+			const match = matchPath(pathname, { path : currentRoute });
+	
+			if (!match.isExact) {
+	
+				push(notFoundRedirect);
+			}
+		}
+	};
 
 	useEffect(() => {
 
 		setRoutes(listRoutes);
+
+		redirect();
 	}, []);
 
 	return (
@@ -31,6 +52,13 @@ const Mapping = memo(({ children }) => {
 		</MappingContext.Provider>
 	);
 });
+
+Mapping.propTypes = {
+	/**
+	 * Caso a rota informada na URL não exista, o valor dessa propriedade deve ser utilizado para um redirecionamento
+	 */
+	notFoundRedirect : PropTypes.string
+};
 
 /**
  * Agrupador de rotas
@@ -87,6 +115,8 @@ const MapRoute = ({ children, name, label, component, render, as, ...rest }) => 
 				const Component = as || Route;
 
 				return <Component {...rest} path={path} render={() => {
+
+					currentRoute = path;
 
 					if (children) {
 
