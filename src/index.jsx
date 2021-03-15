@@ -1,12 +1,15 @@
-/* eslint-disable react/prop-types */
-
-import React, { createContext, useContext, useState, useEffect, memo } from 'react';
-import { matchPath, useLocation } from 'react-router-dom';
+import React, { createContext, useContext, useState, memo, useEffect } from 'react';
+import { matchPath, useLocation, Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import invariant from 'invariant';
 
-const Context 		= createContext(false);
-const listRoutes 	= {};
+const MappingContext		= createContext(false);
+MappingContext.displayName	= 'MappingContext';
+
+const GroupingContext		= createContext({ prefixes : [], prefix : '' });
+GroupingContext.displayName = 'GroupingContext';
+
+const listRoutes	= {};
 
 /**
  * Contexto do agrupador
@@ -15,65 +18,47 @@ const Mapping = memo(({ children }) => {
 
 	const [ routes, setRoutes ] = useState({});
 
-	return (
-		<Context.Provider value={{ routes, setRoutes }}>
-			<Grouping>
-				{ children }
-			</Grouping>
-		</Context.Provider>
-	);
-});
-
-/**
- * Agrupador de rotas
- * 
- * @param {String} props.prefix - Caminho de prefixação usado nas rotas internas do agrupador 
- */
-const  Grouping = memo(({ children, prefix }) => {
-
-	const { setRoutes } = useContext(Context);
-
 	useEffect(() => {
 
 		setRoutes(listRoutes);
 	}, []);
 
 	return (
-		<Context.Consumer>
+		<MappingContext.Provider value={{ routes }}>
+			<Grouping>
+				{ children }
+			</Grouping>
+		</MappingContext.Provider>
+	);
+});
+
+/**
+ * Agrupador de rotas
+ */
+const Grouping = memo(({ children, prefix }) => {
+
+	const { prefixes } = useContext(GroupingContext);
+
+	return (
+		<MappingContext.Consumer>
 			{(context) => {
 
 				invariant(context, 'You should not use <Grouping> outside a <Mapping>');
 
-				return React.Children.toArray(children).map((item, key) => {
-
-					if (React.isValidElement(item)) {
-
-						const { path, label, name } = item.props;
-
-						if (path) {
-
-							const newPath = [ `/${prefix}`, path ].join('/').replace(/(\/+)/g, '/');
-
-							if (name) {
-
-								listRoutes[name] = !label ? newPath : {
-									path	: newPath,
-									label 	: label
-								};
-							}
-
-							return React.cloneElement(item, { ...item.props, key, path : newPath });
-						}
-					}
-
-					return !prefix ? item : React.cloneElement(item, { ...item.props, prefix : `${prefix}/${item.props.prefix}` });
-				});	
+				return (
+					<GroupingContext.Provider value={{ prefixes : [...prefixes, prefix], prefix }}>
+						{ children }
+					</GroupingContext.Provider>
+				);
 			}}
-		</Context.Consumer>
+		</MappingContext.Consumer>
 	);
 });
 
 Grouping.propTypes = {
+	/**
+	 * Caminho de prefixação usado nas rotas internas do agrupador 
+	 */
 	prefix : PropTypes.string
 };
 
@@ -82,11 +67,67 @@ Grouping.defaultProps = {
 };
 
 /**
+ * Componente espelho de "Route", com novos métodos complementares
+ */
+const MapRoute = ({ children, name, label, component, render, as, ...rest }) => {
+
+	return (
+		<GroupingContext.Consumer>
+			{(context) => {
+
+				invariant(context, 'You should not use <MapRoute> outside a <Mapping>');
+
+				const path = `${['/', ...context.prefixes, rest.path].join('/').replace(/(\/+)/g, '/')}`;
+
+				if (name) {
+
+					listRoutes[name] = !label ? path : { path, label };
+				}
+
+				const Component = as || Route;
+
+				return <Component {...rest} path={path} render={() => {
+
+					if (children) {
+
+						return children;
+					}
+
+					const Component = component || render;
+
+					return <Component />;
+				}} />;
+			}}
+		</GroupingContext.Consumer>
+	);
+};
+
+MapRoute.propTypes = {
+	/**
+	 * Chave de identificação da rota
+	 */
+	name	: PropTypes.string,
+	/**
+	 * Texto utilizado para a utilização do breadcrump
+	 */
+	label	: PropTypes.string,
+	/**
+	 * Elemento exclusivo para a utilização da biblioteca "react-router-authenticator"
+	 */
+	as 		: PropTypes.elementType,
+	...Route.propTypes
+};
+
+MapRoute.defaultProps = {
+	...Route.defaultProps
+};
+
+/**
  * Hook customizado para uso das rotas mapeadas
  */
 const useRoute = () => {
 	
-	const { routes } = useContext(Context);
+	const { routes } = useContext(MappingContext);
 
 	const lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
 
@@ -165,7 +206,7 @@ const useRoute = () => {
  */
 const useBreadcrumb = () => {
 	
-	const { routes } 	= useContext(Context);
+	const { routes } 	= useContext(MappingContext);
 	const { pathname } 	= useLocation();
 	const breadcrumb 	= [];
 
@@ -173,9 +214,7 @@ const useBreadcrumb = () => {
 
 		const { path, label } = routes[route];
 
-		const match = matchPath(pathname, {
-			path : path
-		});
+		const match = matchPath(pathname, { path });
 
 		if (match) {
 
@@ -193,6 +232,7 @@ const useBreadcrumb = () => {
 export {
 	Mapping,
 	Grouping,
+	MapRoute,
 	useRoute,
 	useBreadcrumb
 };

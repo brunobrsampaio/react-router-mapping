@@ -15,8 +15,8 @@ npm install react-router-mapping
 # Modo de uso
 
 ```jsx
-import { BrowserRouter, Switch, Route } from "react-router-dom";
-import { Mapping, Grouping } from 'react-router-mapping';
+import { BrowserRouter, Switch } from "react-router-dom";
+import { Mapping, Grouping, MapRoute } from 'react-router-mapping';
 
 export default () => {
 		
@@ -24,33 +24,33 @@ export default () => {
     <BrowserRouter>
       <Switch>
         <Mapping>
-          <Route exact name="home" label="Home"  path="/" component={Home} />
-          <Route exact name="route-one" label="Route One" path="/route-one" component={Component1} />
-          <Route exact name="route-two" label="Route Two" path="/route-two" component={Component2} />
-          <Route exact name="route-three" label="Route Three" path="/route-three" component={Component3} />
+          <MapRoute exact name="home" label="Home"  path="/" component={Home} />
+          <MapRoute exact name="route-one" label="Route One" path="/route-one" component={Component1} />
+          <MapRoute exact name="route-two" label="Route Two" path="/route-two" component={Component2} />
+          <MapRoute exact name="route-three" label="Route Three" path="/route-three" component={Component3} />
           <Grouping prefix="level-one">
-            <Route exact name="route-four" label="Route Four" path="/route-four" render={() => {
+            <MapRoute exact name="route-four" label="Route Four" path="/route-four" render={() => {
 							
               return <Component4 />
             }} />
-            <Route exact name="route-five" label="Route Five" path="/route-five" render={() => {
+            <MapRoute exact name="route-five" label="Route Five" path="/route-five" render={() => {
 							
               return <Component5 />
             }} />
-            <Route exact name="route-six" label="Route Six" path="/route-six" render={() => {
+            <MapRoute exact name="route-six" label="Route Six" path="/route-six" render={() => {
 							
               return <Component6 />
             }} />
             <Grouping prefix="level-two">
-              <Route exact name="route-seven" label="Route Seven" path="/route-seven">
+              <MapRoute exact name="route-seven" label="Route Seven" path="/route-seven">
                 <Component7 />
-              </Route>
-              <Route exact name="route-eight" label="Route Eight" path="/route-eight">
+              </MapRoute>
+              <MapRoute exact name="route-eight" label="Route Eight" path="/route-eight">
                 <Component8 />
-              </Route>
-              <Route exact name="route-nine" label="Route Nine" path="/route-nine">
+              </MapRoute>
+              <MapRoute exact name="route-nine" label="Route Nine" path="/route-nine">
                 <Component9 />
-              </Route>
+              </MapRoute>
             </Grouping>
           </Grouping>
         </Mapping>
@@ -72,19 +72,19 @@ O `Grouping` realiza o aninhamento das rotas em seu contexto. Ele recebe uma ún
 
 ```jsx
 <Grouping prefix="level-one">
-  <Route path="/route-four" component={Component4} />
+  <MapRoute path="/route-four" component={Component4} />
   <Grouping prefix="level-two">
-    <Route path="/route-seven" component={Component7} />
+    <MapRoute path="/route-seven" component={Component7} />
   </Grouping>
 </Grouping>
 ```
 
-## **`Route`** (Não pertence a biblioteca)
+## **`MapRoute`** (Obrigátorio)
 
-Este componente não faz parte da biblioteca em si e sim do [React Router](https://reactrouter.com/web/guides/quick-start). O que fazemos é apenas um incremento de 2 (duas) propriedades, para que o componente `Route` trabalhe em conjunto com a biblioteca. Sendo elas `name` e `label`, exemplo:
+O `MapRoute` é um componente espelho de `Route`, um componente que faz parte da biblioteca [React Router](https://reactrouter.com/web/guides/quick-start). O que fazemos é apenas um incremento de 2 (duas) propriedades. Sendo elas `name` e `label`, exemplo:
 
 ```jsx
-<Route name="home" label="Home" path="/" component={Home} />
+<MapRoute name="home" label="Home" path="/" component={Home} />
 ```
 
 ### Propriedades
@@ -93,6 +93,7 @@ Este componente não faz parte da biblioteca em si e sim do [React Router](https
 | ------ | ------ | ------ | ------ |
 | name | **String** | Valor chave para identificação da rota | **Vázio** | 
 | label | **String** | Título amigável para uso do breadcrumb | **Vázio** |
+| as | **Element** | Este atributo é exclusivo para trabalhar em conjunto com o componente `AuthRoute` da biblioteca [React Router Authenticator](https://www.npmjs.com/package/react-router-authenticator) | **Vázio** |
 
 # Hooks
 
@@ -134,7 +135,7 @@ Caso utilize somente o atributo `name` em suas rotas, o retorno do método será
   "route-seven": "/level-one/level-two/route-seven",
   "route-six": "/level-one/route-six",
   "route-three": "/route-three",
-  "route-two": "/route-two",
+  "route-two": "/route-two"
 }
 ```
 
@@ -214,7 +215,7 @@ A segunda e última funcionalidade, seria um complemento para parâmetros dinâm
 
 ```jsx
 <Grouping prefix="level-one">
-  <Route path="/route-four/:id" component={Component4} />
+  <MapRoute path="/route-four/:id" component={Component4} />
 </Grouping>
 ```
 

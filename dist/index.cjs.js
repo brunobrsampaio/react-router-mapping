@@ -24,6 +24,24 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
 
@@ -58,12 +76,60 @@ function _objectSpread2(target) {
   return target;
 }
 
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
 function _slicedToArray(arr, i) {
   return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
+
 function _arrayWithHoles(arr) {
   if (Array.isArray(arr)) return arr;
+}
+
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _iterableToArrayLimit(arr, i) {
@@ -108,6 +174,10 @@ function _arrayLikeToArray(arr, len) {
   for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
 
   return arr2;
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 function _nonIterableRest() {
@@ -1251,7 +1321,13 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 var invariant_1 = invariant;
 
-var Context = /*#__PURE__*/React.createContext(false);
+var MappingContext = /*#__PURE__*/React.createContext(false);
+MappingContext.displayName = 'MappingContext';
+var GroupingContext = /*#__PURE__*/React.createContext({
+  prefixes: [],
+  prefix: ''
+});
+GroupingContext.displayName = 'GroupingContext';
 var listRoutes = {};
 /**
  * Contexto do agrupador
@@ -1265,73 +1341,107 @@ var Mapping = /*#__PURE__*/React.memo(function (_ref) {
       routes = _useState2[0],
       setRoutes = _useState2[1];
 
-  return /*#__PURE__*/React__default['default'].createElement(Context.Provider, {
+  React.useEffect(function () {
+    setRoutes(listRoutes);
+  }, []);
+  return /*#__PURE__*/React__default['default'].createElement(MappingContext.Provider, {
     value: {
-      routes: routes,
-      setRoutes: setRoutes
+      routes: routes
     }
   }, /*#__PURE__*/React__default['default'].createElement(Grouping, null, children));
 });
 /**
  * Agrupador de rotas
- * 
- * @param {String} props.prefix - Caminho de prefixação usado nas rotas internas do agrupador 
  */
 
 var Grouping = /*#__PURE__*/React.memo(function (_ref2) {
   var children = _ref2.children,
       prefix = _ref2.prefix;
 
-  var _useContext = React.useContext(Context),
-      setRoutes = _useContext.setRoutes;
+  var _useContext = React.useContext(GroupingContext),
+      prefixes = _useContext.prefixes;
 
-  React.useEffect(function () {
-    setRoutes(listRoutes);
-  }, []);
-  return /*#__PURE__*/React__default['default'].createElement(Context.Consumer, null, function (context) {
+  return /*#__PURE__*/React__default['default'].createElement(MappingContext.Consumer, null, function (context) {
     invariant_1(context, 'You should not use <Grouping> outside a <Mapping>');
-    return React__default['default'].Children.toArray(children).map(function (item, key) {
-      if ( /*#__PURE__*/React__default['default'].isValidElement(item)) {
-        var _item$props = item.props,
-            path = _item$props.path,
-            label = _item$props.label,
-            name = _item$props.name;
-
-        if (path) {
-          var newPath = ["/".concat(prefix), path].join('/').replace(/(\/+)/g, '/');
-
-          if (name) {
-            listRoutes[name] = !label ? newPath : {
-              path: newPath,
-              label: label
-            };
-          }
-
-          return /*#__PURE__*/React__default['default'].cloneElement(item, _objectSpread2(_objectSpread2({}, item.props), {}, {
-            key: key,
-            path: newPath
-          }));
-        }
+    return /*#__PURE__*/React__default['default'].createElement(GroupingContext.Provider, {
+      value: {
+        prefixes: [].concat(_toConsumableArray(prefixes), [prefix]),
+        prefix: prefix
       }
-
-      return !prefix ? item : /*#__PURE__*/React__default['default'].cloneElement(item, _objectSpread2(_objectSpread2({}, item.props), {}, {
-        prefix: "".concat(prefix, "/").concat(item.props.prefix)
-      }));
-    });
+    }, children);
   });
 });
 Grouping.propTypes = {
+  /**
+   * Caminho de prefixação usado nas rotas internas do agrupador 
+   */
   prefix: propTypes.string
 };
 Grouping.defaultProps = {
   prefix: ''
 };
 /**
+ * Componente espelho de "Route", com novos métodos complementares
+ */
+
+var MapRoute = function MapRoute(_ref3) {
+  var children = _ref3.children,
+      name = _ref3.name,
+      label = _ref3.label,
+      component = _ref3.component,
+      _render = _ref3.render,
+      as = _ref3.as,
+      rest = _objectWithoutProperties(_ref3, ["children", "name", "label", "component", "render", "as"]);
+
+  return /*#__PURE__*/React__default['default'].createElement(GroupingContext.Consumer, null, function (context) {
+    invariant_1(context, 'You should not use <MapRoute> outside a <Mapping>');
+    var path = "".concat(['/'].concat(_toConsumableArray(context.prefixes), [rest.path]).join('/').replace(/(\/+)/g, '/'));
+
+    if (name) {
+      listRoutes[name] = !label ? path : {
+        path: path,
+        label: label
+      };
+    }
+
+    var Component = as || reactRouterDom.Route;
+    return /*#__PURE__*/React__default['default'].createElement(Component, _extends({}, rest, {
+      path: path,
+      render: function render() {
+        if (children) {
+          return children;
+        }
+
+        var Component = component || _render;
+        return /*#__PURE__*/React__default['default'].createElement(Component, null);
+      }
+    }));
+  });
+};
+
+MapRoute.propTypes = _objectSpread2({
+  /**
+   * Chave de identificação da rota
+   */
+  name: propTypes.string,
+
+  /**
+   * Texto utilizado para a utilização do breadcrump
+   */
+  label: propTypes.string,
+
+  /**
+   * Elemento exclusivo para a utilização da biblioteca "react-router-authenticator"
+   */
+  as: propTypes.elementType
+}, reactRouterDom.Route.propTypes);
+MapRoute.defaultProps = _objectSpread2({}, reactRouterDom.Route.defaultProps);
+/**
  * Hook customizado para uso das rotas mapeadas
  */
 
 var useRoute = function useRoute() {
-  var _useContext2 = React.useContext(Context),
+  var _useContext2 = React.useContext(MappingContext),
       routes = _useContext2.routes;
 
   var lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
@@ -1400,7 +1510,7 @@ var useRoute = function useRoute() {
 
 
 var useBreadcrumb = function useBreadcrumb() {
-  var _useContext3 = React.useContext(Context),
+  var _useContext3 = React.useContext(MappingContext),
       routes = _useContext3.routes;
 
   var _useLocation = reactRouterDom.useLocation(),
@@ -1431,6 +1541,7 @@ var useBreadcrumb = function useBreadcrumb() {
 };
 
 exports.Grouping = Grouping;
+exports.MapRoute = MapRoute;
 exports.Mapping = Mapping;
 exports.useBreadcrumb = useBreadcrumb;
 exports.useRoute = useRoute;
