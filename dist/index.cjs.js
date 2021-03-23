@@ -1324,17 +1324,16 @@ var invariant_1 = invariant;
 var MappingContext = /*#__PURE__*/React.createContext(false);
 MappingContext.displayName = 'MappingContext';
 var GroupingContext = /*#__PURE__*/React.createContext({
-  prefixes: [],
-  prefix: ''
+  prefixes: []
 });
 GroupingContext.displayName = 'GroupingContext';
 var listRoutes = {};
-var currentRoute = '';
+var currentRoute = {};
 /**
  * Contexto do agrupador
  */
 
-var Mapping = /*#__PURE__*/React.memo(function (_ref) {
+var Mapping = function Mapping(_ref) {
   var children = _ref.children,
       notFoundRedirect = _ref.notFoundRedirect;
 
@@ -1366,15 +1365,20 @@ var Mapping = /*#__PURE__*/React.memo(function (_ref) {
   };
 
   React.useEffect(function () {
-    setRoutes(listRoutes);
+    setRoutes(function (old) {
+      return _objectSpread2(_objectSpread2({}, old), listRoutes);
+    });
     redirect();
   }, []);
-  return /*#__PURE__*/React__default['default'].createElement(MappingContext.Provider, {
-    value: {
-      routes: routes
-    }
-  }, /*#__PURE__*/React__default['default'].createElement(Grouping, null, children));
-});
+  return React.useMemo(function () {
+    return /*#__PURE__*/React__default['default'].createElement(MappingContext.Provider, {
+      value: {
+        routes: routes
+      }
+    }, children);
+  }, [routes]);
+};
+
 Mapping.propTypes = {
   /**
    * Caso a rota informada na URL não exista, o valor dessa propriedade deve ser utilizado para um redirecionamento
@@ -1385,23 +1389,24 @@ Mapping.propTypes = {
  * Agrupador de rotas
  */
 
-var Grouping = /*#__PURE__*/React.memo(function (_ref2) {
+var Grouping = function Grouping(_ref2) {
   var children = _ref2.children,
       prefix = _ref2.prefix;
+  var context = React.useContext(MappingContext);
+  invariant_1(context, 'You should not use <Grouping> outside a <Mapping>');
 
   var _useContext = React.useContext(GroupingContext),
       prefixes = _useContext.prefixes;
 
-  return /*#__PURE__*/React__default['default'].createElement(MappingContext.Consumer, null, function (context) {
-    invariant_1(context, 'You should not use <Grouping> outside a <Mapping>');
+  return React.useMemo(function () {
     return /*#__PURE__*/React__default['default'].createElement(GroupingContext.Provider, {
       value: {
-        prefixes: [].concat(_toConsumableArray(prefixes), [prefix]),
-        prefix: prefix
+        prefixes: [].concat(_toConsumableArray(prefixes), [prefix])
       }
     }, children);
-  });
-});
+  }, []);
+};
+
 Grouping.propTypes = {
   /**
    * Caminho de prefixação usado nas rotas internas do agrupador 
@@ -1424,13 +1429,20 @@ var MapRoute = function MapRoute(_ref3) {
       as = _ref3.as,
       rest = _objectWithoutProperties(_ref3, ["children", "name", "label", "component", "render", "as"]);
 
-  return /*#__PURE__*/React__default['default'].createElement(GroupingContext.Consumer, null, function (context) {
-    invariant_1(context, 'You should not use <MapRoute> outside a <Mapping>');
-    var path = "".concat(['/'].concat(_toConsumableArray(context.prefixes), [rest.path]).join('/').replace(/(\/+)/g, '/'));
+  var context = React.useContext(MappingContext);
+  invariant_1(context, 'You should not use <MapRoute> outside a <Mapping>');
+
+  var _useContext2 = React.useContext(GroupingContext),
+      prefixes = _useContext2.prefixes;
+
+  return React.useMemo(function () {
+    var path = Array.of(rest.path).flat().map(function (item) {
+      return "".concat(['/'].concat(_toConsumableArray(prefixes), [item]).join('/').replace(/(\/+)/g, '/'));
+    });
 
     if (name) {
-      listRoutes[name] = !label ? path : {
-        path: path,
+      listRoutes[name] = !label ? path[0] : {
+        path: path[0],
         label: label
       };
     }
@@ -1438,8 +1450,9 @@ var MapRoute = function MapRoute(_ref3) {
     var Component = as || reactRouterDom.Route;
     return /*#__PURE__*/React__default['default'].createElement(Component, _extends({}, rest, {
       path: path,
-      render: function render() {
-        currentRoute = path;
+      render: function render(_ref4) {
+        var match = _ref4.match;
+        currentRoute = match.path;
 
         if (children) {
           return children;
@@ -1449,7 +1462,7 @@ var MapRoute = function MapRoute(_ref3) {
         return /*#__PURE__*/React__default['default'].createElement(Component, null);
       }
     }));
-  });
+  }, []);
 };
 
 MapRoute.propTypes = _objectSpread2({
@@ -1474,8 +1487,8 @@ MapRoute.defaultProps = _objectSpread2({}, reactRouterDom.Route.defaultProps);
  */
 
 var useRoute = function useRoute() {
-  var _useContext2 = React.useContext(MappingContext),
-      routes = _useContext2.routes;
+  var _useContext3 = React.useContext(MappingContext),
+      routes = _useContext3.routes;
 
   var lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
   /**
@@ -1519,17 +1532,19 @@ var useRoute = function useRoute() {
 
 
   var all = function all() {
-    for (var route in routes) {
-      if (routes[route] instanceof Object) {
-        if (routes[route].path) {
-          routes[route].path = routes[route].path.replace(lastParamExp, '');
+    var cloneRoutes = JSON.parse(JSON.stringify(routes));
+
+    for (var route in cloneRoutes) {
+      if (cloneRoutes[route] instanceof Object) {
+        if (cloneRoutes[route].path) {
+          cloneRoutes[route].path = cloneRoutes[route].path.replace(lastParamExp, '');
         }
       } else {
-        routes[route] = routes[route].replace(lastParamExp, '');
+        cloneRoutes[route] = cloneRoutes[route].replace(lastParamExp, '');
       }
     }
 
-    return routes;
+    return cloneRoutes;
   };
 
   return {
@@ -1543,8 +1558,8 @@ var useRoute = function useRoute() {
 
 
 var useBreadcrumb = function useBreadcrumb() {
-  var _useContext3 = React.useContext(MappingContext),
-      routes = _useContext3.routes;
+  var _useContext4 = React.useContext(MappingContext),
+      routes = _useContext4.routes;
 
   var _useLocation2 = reactRouterDom.useLocation(),
       pathname = _useLocation2.pathname;

@@ -1,24 +1,24 @@
-import React, { createContext, useContext, useState, memo, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { matchPath, useLocation, useHistory, Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import invariant from 'invariant';
 
-const MappingContext		= createContext(false);
-MappingContext.displayName	= 'MappingContext';
+const MappingContext = createContext(false);
+MappingContext.displayName = 'MappingContext';
 
-const GroupingContext		= createContext({ prefixes : [], prefix : '' });
+const GroupingContext = createContext({ prefixes : [] });
 GroupingContext.displayName = 'GroupingContext';
 
-const listRoutes	= {};
-let currentRoute	= '';
+let listRoutes = {};
+let currentRoute = {};
 
 /**
  * Contexto do agrupador
  */
-const Mapping = memo(({ children, notFoundRedirect }) => {
+const Mapping = ({ children, notFoundRedirect }) => {
 
 	const [ routes, setRoutes ] = useState({});
-	const { pathname } 	= useLocation();
+	const { pathname } = useLocation();
 	const { push } = useHistory();
 
 	/**
@@ -27,9 +27,9 @@ const Mapping = memo(({ children, notFoundRedirect }) => {
 	const redirect = () => {
 
 		if (notFoundRedirect) {
-			
+
 			const match = matchPath(pathname, { path : currentRoute });
-	
+
 			if (!match.isExact) {
 	
 				push(notFoundRedirect);
@@ -39,19 +39,23 @@ const Mapping = memo(({ children, notFoundRedirect }) => {
 
 	useEffect(() => {
 
-		setRoutes(listRoutes);
+		setRoutes((old) => {
+
+			return {
+				...old,
+				...listRoutes
+			};
+		});
 
 		redirect();
 	}, []);
 
-	return (
+	return useMemo(() => (
 		<MappingContext.Provider value={{ routes }}>
-			<Grouping>
-				{ children }
-			</Grouping>
+			{ children }
 		</MappingContext.Provider>
-	);
-});
+	), [ routes ]);
+};
 
 Mapping.propTypes = {
 	/**
@@ -63,25 +67,20 @@ Mapping.propTypes = {
 /**
  * Agrupador de rotas
  */
-const Grouping = memo(({ children, prefix }) => {
+const Grouping = ({ children, prefix }) => {
+
+	const context = useContext(MappingContext);
+
+	invariant(context, 'You should not use <Grouping> outside a <Mapping>');
 
 	const { prefixes } = useContext(GroupingContext);
 
-	return (
-		<MappingContext.Consumer>
-			{(context) => {
-
-				invariant(context, 'You should not use <Grouping> outside a <Mapping>');
-
-				return (
-					<GroupingContext.Provider value={{ prefixes : [...prefixes, prefix], prefix }}>
-						{ children }
-					</GroupingContext.Provider>
-				);
-			}}
-		</MappingContext.Consumer>
-	);
-});
+	return useMemo(() => (
+		<GroupingContext.Provider value={{ prefixes : [...prefixes, prefix] }}>
+			{ children }
+		</GroupingContext.Provider>
+	), []);
+};
 
 Grouping.propTypes = {
 	/**
@@ -99,37 +98,40 @@ Grouping.defaultProps = {
  */
 const MapRoute = ({ children, name, label, component, render, as, ...rest }) => {
 
-	return (
-		<GroupingContext.Consumer>
-			{(context) => {
+	const context = useContext(MappingContext);
 
-				invariant(context, 'You should not use <MapRoute> outside a <Mapping>');
+	invariant(context, 'You should not use <MapRoute> outside a <Mapping>');
 
-				const path = `${['/', ...context.prefixes, rest.path].join('/').replace(/(\/+)/g, '/')}`;
+	const { prefixes } = useContext(GroupingContext);
 
-				if (name) {
+	return useMemo(() => {
 
-					listRoutes[name] = !label ? path : { path, label };
-				}
+		const path = Array.of(rest.path).flat().map((item) => {
 
-				const Component = as || Route;
+			return `${['/', ...prefixes, item].join('/').replace(/(\/+)/g, '/')}`;
+		});
 
-				return <Component {...rest} path={path} render={() => {
+		if (name) {
 
-					currentRoute = path;
+			listRoutes[name] = !label ? path[0] : { path : path[0], label };
+		}
 
-					if (children) {
+		const Component = as || Route;
 
-						return children;
-					}
+		return <Component {...rest} path={path} render={({ match }) => {
 
-					const Component = component || render;
+			currentRoute = match.path;
 
-					return <Component />;
-				}} />;
-			}}
-		</GroupingContext.Consumer>
-	);
+			if (children) {
+
+				return children;
+			}
+
+			const Component = component || render;
+
+			return <Component />;
+		}} />;
+	}, []);
 };
 
 MapRoute.propTypes = {
@@ -191,9 +193,9 @@ const useRoute = () => {
 			}
 	
 			for (const param in params) {
-	
+
 				const regExp = new RegExp(`(\\:${param}\\??)`, 'g');
-	
+
 				pathname = pathname.replace(regExp, params[param]);
 			}
 
@@ -208,21 +210,23 @@ const useRoute = () => {
 	 */
 	const all = () => {
 
-		for (var route in routes) {
+		const cloneRoutes = JSON.parse(JSON.stringify(routes));
 
-			if (routes[route] instanceof Object) {
+		for (var route in cloneRoutes) {
 
-				if (routes[route].path) {
+			if (cloneRoutes[route] instanceof Object) {
+
+				if (cloneRoutes[route].path) {
 					
-					routes[route].path = routes[route].path.replace(lastParamExp, '');
+					cloneRoutes[route].path = cloneRoutes[route].path.replace(lastParamExp, '');
 				}
 			} else {
 
-				routes[route] = routes[route].replace(lastParamExp, '');
+				cloneRoutes[route] = cloneRoutes[route].replace(lastParamExp, '');
 			}
 		}
 
-		return routes;
+		return cloneRoutes;
 	};
 
 	return {
