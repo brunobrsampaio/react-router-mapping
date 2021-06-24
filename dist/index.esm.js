@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo, useContext, createContext } from 'react';
-import { useLocation, useHistory, Route, matchPath } from 'react-router-dom';
+import React, { useContext, useRef, useEffect, createContext, useState, Fragment as Fragment$1 } from 'react';
+import { Switch, Route, useLocation, matchPath } from 'react-router-dom';
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -1315,137 +1315,136 @@ var invariant_1 = invariant;
 
 var MappingContext = /*#__PURE__*/createContext(false);
 MappingContext.displayName = 'MappingContext';
-var GroupingContext = /*#__PURE__*/createContext({
-  prefixes: []
-});
-GroupingContext.displayName = 'GroupingContext';
-var listRoutes = {};
-var currentRoute = {};
 /**
  * Contexto do agrupador
  */
 
-var Mapping = function Mapping(_ref) {
+var MappingProvider = function MappingProvider(_ref) {
   var children = _ref.children,
-      notFoundRedirect = _ref.notFoundRedirect;
+      rest = _objectWithoutProperties(_ref, ["children"]);
 
-  var _useState = useState({}),
+  var routes = useRef({}).current;
+  var groups = useRef([]).current;
+
+  var _useState = useState(false),
       _useState2 = _slicedToArray(_useState, 2),
-      routes = _useState2[0],
-      setRoutes = _useState2[1];
-
-  var _useLocation = useLocation(),
-      pathname = _useLocation.pathname;
-
-  var _useHistory = useHistory(),
-      push = _useHistory.push;
-  /**
-   * Verifica se a rota informada, é igual a atual na listagem de rotas
-   */
-
-
-  var redirect = function redirect() {
-    if (notFoundRedirect) {
-      var match = matchPath(pathname, {
-        path: currentRoute
-      });
-
-      if (!match.isExact) {
-        push(notFoundRedirect);
-      }
-    }
-  };
+      update = _useState2[0],
+      setUpdate = _useState2[1];
 
   useEffect(function () {
-    setRoutes(function (old) {
-      return _objectSpread2(_objectSpread2({}, old), listRoutes);
-    });
-    redirect();
+    if (Object.keys(routes).length) {
+      setUpdate(!update);
+    }
   }, []);
-  return useMemo(function () {
-    return /*#__PURE__*/React.createElement(MappingContext.Provider, {
-      value: {
-        routes: routes
-      }
-    }, children);
-  }, [routes]);
+  return /*#__PURE__*/React.createElement(MappingContext.Provider, {
+    value: _objectSpread2({
+      routes: routes,
+      groups: groups
+    }, rest)
+  }, children);
 };
 
-Mapping.propTypes = {
-  /**
-   * Caso a rota informada na URL não exista, o valor dessa propriedade deve ser utilizado para um redirecionamento
-   */
-  notFoundRedirect: propTypes.string
+var Mapping = function Mapping(_ref2) {
+  var children = _ref2.children;
+  return /*#__PURE__*/React.createElement(MappingProvider, null, /*#__PURE__*/React.createElement(MappingContext.Consumer, null, function (_ref3) {
+    var groups = _ref3.groups;
+    return /*#__PURE__*/React.createElement(React.Fragment, null, groups.length ? /*#__PURE__*/React.createElement(Switch, null, groups) : /*#__PURE__*/React.createElement(Grouping, {
+      prefix: "/"
+    }, children));
+  }));
 };
 /**
  * Agrupador de rotas
  */
 
-var Grouping = function Grouping(_ref2) {
-  var children = _ref2.children,
-      prefix = _ref2.prefix;
+
+var GroupingContext = /*#__PURE__*/createContext({
+  prefixes: []
+});
+GroupingContext.displayName = 'GroupingContext';
+
+var GroupingProvider = function GroupingProvider(_ref4) {
+  var children = _ref4.children,
+      rest = _objectWithoutProperties(_ref4, ["children"]);
+
+  return /*#__PURE__*/React.createElement(GroupingContext.Provider, {
+    value: _objectSpread2({}, rest)
+  }, children);
+};
+
+var Grouping = function Grouping(_ref5) {
+  var children = _ref5.children,
+      prefix = _ref5.prefix,
+      layout = _ref5.layout;
   var context = useContext(MappingContext);
   invariant_1(context, 'You should not use <Grouping> outside a <Mapping>');
 
   var _useContext = useContext(GroupingContext),
-      prefixes = _useContext.prefixes;
+      prefixes = _useContext.prefixes,
+      groupLayout = _useContext.groupLayout;
 
-  return useMemo(function () {
-    return /*#__PURE__*/React.createElement(GroupingContext.Provider, {
-      value: {
-        prefixes: [].concat(_toConsumableArray(prefixes), [prefix])
-      }
-    }, children);
+  var Layout = layout || groupLayout || Fragment$1;
+  var groupRoutes = useRef([]).current;
+  useEffect(function () {
+    var groupPath = [].concat(_toConsumableArray(prefixes), [prefix]).join('/').replace(/(\/+)/g, '/');
+    context.groups.push( /*#__PURE__*/React.createElement(Route, {
+      key: groupPath,
+      path: groupPath
+    }, /*#__PURE__*/React.createElement(Layout, null, /*#__PURE__*/React.createElement(Switch, null, Object.values(groupRoutes)))));
   }, []);
+  return /*#__PURE__*/React.createElement(GroupingProvider, {
+    prefixes: [].concat(_toConsumableArray(prefixes), ["/".concat(prefix)]),
+    groupRoutes: groupRoutes,
+    groupLayout: Layout
+  }, children);
 };
 
 Grouping.propTypes = {
   /**
    * Caminho de prefixação usado nas rotas internas do agrupador 
    */
-  prefix: propTypes.string
+  prefix: propTypes.string.isRequired,
+
+  /**
+   * Layout do agrupador em questão
+   */
+  layout: propTypes.elementType
 };
 Grouping.defaultProps = {
   prefix: ''
 };
+Grouping.displayName = 'Grouping';
 /**
  * Componente espelho de "Route", com novos métodos complementares
  */
 
-var MapRoute = function MapRoute(_ref3) {
-  var children = _ref3.children,
-      name = _ref3.name,
-      label = _ref3.label,
-      component = _ref3.component,
-      _render = _ref3.render,
-      as = _ref3.as,
-      rest = _objectWithoutProperties(_ref3, ["children", "name", "label", "component", "render", "as"]);
+var MapRoute = function MapRoute(_ref6) {
+  var children = _ref6.children,
+      name = _ref6.name,
+      component = _ref6.component,
+      _render = _ref6.render,
+      as = _ref6.as,
+      rest = _objectWithoutProperties(_ref6, ["children", "name", "component", "render", "as"]);
 
   var context = useContext(MappingContext);
   invariant_1(context, 'You should not use <MapRoute> outside a <Mapping>');
 
   var _useContext2 = useContext(GroupingContext),
-      prefixes = _useContext2.prefixes;
+      prefixes = _useContext2.prefixes,
+      groupRoutes = _useContext2.groupRoutes;
 
-  return useMemo(function () {
+  useEffect(function () {
     var path = Array.of(rest.path).flat().map(function (item) {
-      return "".concat(['/'].concat(_toConsumableArray(prefixes), [item]).join('/').replace(/(\/+)/g, '/'));
+      return item ? "".concat([].concat(_toConsumableArray(prefixes), [item]).join('/').replace(/(\/+)/g, '/')) : null;
+    }).filter(function (item) {
+      return item;
     });
-
-    if (name) {
-      listRoutes[name] = !label ? path[0] : {
-        path: path[0],
-        label: label
-      };
-    }
-
-    var Component = as || Route;
-    return /*#__PURE__*/React.createElement(Component, _extends({}, rest, {
-      path: path,
-      render: function render(_ref4) {
-        var match = _ref4.match;
-        currentRoute = match.path;
-
+    var As = as || Route;
+    var route = /*#__PURE__*/React.createElement(As, _extends({}, rest, {
+      key: path,
+      name: name,
+      path: path.length ? path : null,
+      render: function render() {
         if (children) {
           return children;
         }
@@ -1454,7 +1453,16 @@ var MapRoute = function MapRoute(_ref3) {
         return /*#__PURE__*/React.createElement(Component, null);
       }
     }));
+
+    if (groupRoutes) {
+      groupRoutes.push(route);
+    }
+
+    if (name) {
+      context.routes[name] = route;
+    }
   }, []);
+  return null;
 };
 
 MapRoute.propTypes = _objectSpread2({
@@ -1474,6 +1482,7 @@ MapRoute.propTypes = _objectSpread2({
   as: propTypes.elementType
 }, Route.propTypes);
 MapRoute.defaultProps = _objectSpread2({}, Route.defaultProps);
+MapRoute.displayName = 'MapRoute';
 /**
  * Hook customizado para uso das rotas mapeadas
  */
@@ -1496,24 +1505,17 @@ var useRoute = function useRoute() {
     }
 
     if (Object.keys(routes).length) {
-      var location = routes[name];
+      if (routes[name]) {
+        var props = routes[name].props;
+        var pathname = props.path[0];
 
-      if (!location) {
-        return '';
+        for (var param in params) {
+          var regExp = new RegExp("(\\:".concat(param, "\\??)"), 'g');
+          pathname = pathname.replace(regExp, params[param]);
+        }
+
+        return pathname.replace(lastParamExp, '');
       }
-
-      var pathname = location;
-
-      if (location.path) {
-        pathname = location.path;
-      }
-
-      for (var param in params) {
-        var regExp = new RegExp("(\\:".concat(param, "\\??)"), 'g');
-        pathname = pathname.replace(regExp, params[param]);
-      }
-
-      return pathname.replace(lastParamExp, '');
     }
 
     return '';
@@ -1524,19 +1526,24 @@ var useRoute = function useRoute() {
 
 
   var all = function all() {
-    var cloneRoutes = JSON.parse(JSON.stringify(routes));
+    var list = {};
 
-    for (var route in cloneRoutes) {
-      if (cloneRoutes[route] instanceof Object) {
-        if (cloneRoutes[route].path) {
-          cloneRoutes[route].path = cloneRoutes[route].path.replace(lastParamExp, '');
+    for (var route in routes) {
+      var props = routes[route].props;
+
+      if (props.path.length) {
+        if (!list[route]) {
+          list[route] = {
+            label: null
+          };
         }
-      } else {
-        cloneRoutes[route] = cloneRoutes[route].replace(lastParamExp, '');
+
+        list[route].label = props.label;
+        list[route].path = props.path[0].replace(lastParamExp, '');
       }
     }
 
-    return cloneRoutes;
+    return list;
   };
 
   return {
@@ -1553,15 +1560,15 @@ var useBreadcrumb = function useBreadcrumb() {
   var _useContext4 = useContext(MappingContext),
       routes = _useContext4.routes;
 
-  var _useLocation2 = useLocation(),
-      pathname = _useLocation2.pathname;
+  var _useLocation = useLocation(),
+      pathname = _useLocation.pathname;
 
   var breadcrumb = [];
 
   for (var route in routes) {
-    var _routes$route = routes[route],
-        path = _routes$route.path,
-        label = _routes$route.label;
+    var props = routes[route].props;
+    var path = props.path,
+        label = props.label;
     var match = matchPath(pathname, {
       path: path
     });
@@ -1569,7 +1576,7 @@ var useBreadcrumb = function useBreadcrumb() {
     if (match) {
       var url = match.url;
       breadcrumb.push({
-        url: url,
+        path: url,
         label: label
       });
     }
