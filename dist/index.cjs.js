@@ -1361,10 +1361,11 @@ var Mapping = function Mapping(_ref2) {
     }, children));
   }));
 };
+
+Mapping.displayName = 'Mapping';
 /**
  * Agrupador de rotas
  */
-
 
 var GroupingContext = /*#__PURE__*/React.createContext({
   prefixes: []
