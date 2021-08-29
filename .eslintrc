@@ -34,17 +34,31 @@
 				] 
 			}
 		],
+        "react/jsx-curly-spacing": [
+            "error", 
+            {
+                "children": { "when": "always" },
+                "allowMultiline" : true
+            }
+        ],
 		"space-before-function-paren": [
 			"error", 
 			"always"
 		],
-		"eol-last": [
+		"keyword-spacing" : [
+			"error", 
+			{
+				"before" : true,
+				"after" : true
+			}
+		],
+ 		"eol-last": [
 			"error", 
 			"never"
 		],
         "indent": [
             "error",
-            "tab"
+            4
         ],
         "quotes": [
             "error",
@@ -61,5 +75,15 @@
 				"max": 1
 			}
 		],
+        "arrow-spacing" : "error",
+        "block-spacing" : "error",
+        "comma-spacing" : "error",
+        "array-bracket-spacing" : [
+            "error", 
+            "always"
+        ],
+        "object-curly-spacing" : [
+            "error", "always"
+        ]
     }
 }

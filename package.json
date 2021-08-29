@@ -25,13 +25,13 @@
   "peerDependencies": {
     "react": ">=16.0.0",
     "react-dom": ">=16.0.0",
-    "react-router-dom": ">=5.0.0",
-	"react-router": ">=5.2.0"
+    "react-router": ">=5.2.0",
+    "react-router-dom": ">=5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-react": "^7.10.4",
     "@rollup/plugin-commonjs": "^15.1.0",

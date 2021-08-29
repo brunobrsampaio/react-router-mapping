@@ -6,27 +6,41 @@ import resolve from '@rollup/plugin-node-resolve';
 import pkg from './package.json';
 
 export default {
-	input: './src/index.jsx',
-	external: ['react', 'react-dom', 'react-router-dom'],
-	output: [
-		{
-			file: pkg.main,
-			format: 'cjs'
-		},
-		{
-			file: pkg.module,
-			format: 'esm'
-		}
-	],
-	plugins: [
-		resolve(),
-		external(),
-		eslint(),
-		babel({
-			exclude : 'node_modules/**'
-		}),
-		commonjs({
-			include: ['node_modules/**']
-		})
-	]
+    input: './src/index.jsx',
+    external: [ 'react', 'react-dom', 'react-router-dom' ],
+    output: [
+        {
+            file: pkg.main,
+            format: 'cjs'
+        },
+        {
+            file: pkg.module,
+            format: 'esm'
+        }
+    ],
+    plugins: [
+        resolve({
+            browser : true,
+            modulesOnly : true
+        }),
+        external(),
+        eslint(),
+        babel({
+            runtimeHelpers : true,
+            exclude : 'node_modules/**',
+            extensions: [ 
+                '.js', 
+                '.jsx' 
+            ]
+        }),
+        commonjs({
+            include: [ 
+                'node_modules/**' 
+            ],
+            extensions: [ 
+                '.js', 
+                '.jsx' 
+            ]
+        })
+    ]
 };
