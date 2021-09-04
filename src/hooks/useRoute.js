@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import { useMappingContext } from '../Mapping';
+import { useMappingContext } from '../MappingProvider';
 
 /**
  * Hook customizado para uso das rotas mapeadas
  */
 const useRoute = () => {
 	
-    const { routes } = useMappingContext();
+    const routes = useMappingContext();
 
     const lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
 
@@ -27,7 +27,7 @@ const useRoute = () => {
 			
             if (routes[name]) {
 
-                const { path } = routes[name];
+                const { props : { path } } = routes[name];
 	
                 let pathname = path[0];
 		
@@ -54,7 +54,7 @@ const useRoute = () => {
 
         for (var route in routes) {
 			
-            const { path, label } = routes[route];
+            const { props : { path, label } } = routes[route];
 
             if (path.length) {
 

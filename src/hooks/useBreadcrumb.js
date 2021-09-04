@@ -1,18 +1,18 @@
 import { matchPath, useLocation } from 'react-router-dom';
-import { useMappingContext } from '../Mapping';
+import { useMappingContext } from '../MappingProvider';
 
 /**
  * Hook customizado para o usuo de um bread crumb em conjunto com o mapeador
  */
 const useBreadcrumb = () => {
 
-    const { routes } 	= useMappingContext();
-    const { pathname } 	= useLocation();
-    const breadcrumb 	= [];
+    const routes = useMappingContext();
+    const { pathname } = useLocation();
+    const breadcrumb = [];
 
     for (const route in routes) {
 
-        const { path, label } = routes[route];
+        const { props : { path, label } } = routes[route];
 
         const match = matchPath(pathname, { path });
 

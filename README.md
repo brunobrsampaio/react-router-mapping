@@ -1,166 +1,145 @@
 # React Router Mapping
 
-Esta biblioteca tem como finalidade auxiliar os desenvolvedores a terem uma melhor forma de mapear, agrupar e gerenciar as rotas de suas aplicações.
+This library has as auxiliary tools the developers to have a better way to map, group and manage the routes of their applications.
 
-# Antes de começar
+# Before starting
 
-Esta biblioteca trabalha em conjunto com a [React Router](https://reactrouter.com/web/guides/quick-start), utilizando certas funcionalidades que não teriam necessidade de serem reescritas. Sendo assim leiam, com atenção cada seção desse documento.
+This library works in conjunction with [React Router](https://reactrouter.com/web/guides/quick-start), using certain features that would not need to be rewritten. Therefore, carefully read each section of this document.
 
-Existe um componente em específico da biblioteca [React Router](https://reactrouter.com/web/guides/quick-start) que é aconselhável não utilizar, esse seria `Switch`. Este componente já se encontra incorporado a biblioteca.
-
-# Instalação
+# Installation
 
 ```sh
 npm install react-router-mapping
 ```
 
-# Modo de uso
+# How to use
 
 ```jsx
+import React, { Suspense } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
-import { Mapping, Grouping, MapRoute } from 'react-router-mapping';
-
-/**
- * Layout A
- */
-const LayoutA = ({ children }) => (
-    <>
-        <Header />
-        <main>
-            <Aside />
-            <section>
-                { children }
-            </section>
-        </main>
-        <Footer />
-    </>
-);
-
-/**
- * Layout B
- */
-const LayoutB = ({ children }) => (
-    <>
-        <Header />
-        { children }
-        <Footer />
-    </>
-);
-
-/**
- * Rota 404
- */
-const NotFoundPage = () => <MapRoute component={() => <>404 - Not Found</>} />;
+import { MappingProvider, useMap } from 'react-router-mapping';
 
 export default () => {
-		
+
+  const routes = useMap([
+    {
+      exact     : true,
+      name      : 'home',
+      path      : ['/', '/home'],
+      label     : 'Home',
+      component : lazy(() => import(/* webpackChunkName: 'Home' */'./Home'))
+    },
+    {
+      exact     : true,
+      name      : 'route-one',
+      path      : '/route-one',
+      label     : 'Route 1',
+      component : lazy(() => import(/* webpackChunkName: 'route-one' */'./Route1'))
+    },
+    {
+      exact     : true,
+      name      : 'route-two',
+      path      : '/route-two',
+      label     : 'Route 2',
+      component : lazy(() => import(/* webpackChunkName: 'route-two' */'./Route2')),
+    },
+    {
+      path    : '/level-one',
+      routes  : [
+        {
+          exact     : true,
+          name      : 'route-three',
+          path      : '/route-three',
+          label     : 'Route 3',
+          component : lazy(() => import(/* webpackChunkName: 'route-three' */'./Route3')),
+        },
+        {
+          exact     : true,
+          name      : 'route-four',
+          path      : '/route-four',
+          label     : 'Route 4',
+          component : lazy(() => import(/* webpackChunkName: 'route-four' */'./Route4')),
+        },
+        {
+          path    : '/level-two',
+          routes  : [
+            {
+              exact     : true,
+              name      : 'route-five',
+              path      : '/route-five',
+              label     : 'Route 5',
+              component : () => <>Route 5</>
+            },
+            {
+              exact     : true,
+              name      : 'route-six',
+              path      : '/route-six',
+              label     : 'Route 6',
+              component : () => <>Route 6</>
+              routes    : [
+                {
+                  exact     : true,
+                  name      : 'route-nested',
+                  path      : '/route-nested/:id',
+                  label     : 'Route Nested',
+                  component : () => <>Route Nested</>
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      exact     : true,
+      name      : 'not-found',
+      path      : '*',
+      label     : 'Not Found',
+      component : () => <>Not Found</>
+    }
+  ]);
+
   return (
     <BrowserRouter>
-      <Mapping>
-        <MapRoute exact name="home" label="Home"  path="/" component={Home} />
-        <MapRoute exact name="route-one" label="Route One" path="/route-one" component={Component1} />
-        <MapRoute exact name="route-two" label="Route Two" path="/route-two" component={Component2} />
-        <MapRoute exact name="route-three" label="Route Three" path="/route-three" component={Component3} />
-        <Grouping prefix="/level-one" layout={LayoutA}>
-          <MapRoute exact name="route-four" label="Route Four" path="/route-four" render={() => <Component4 />} />
-          <MapRoute exact name="route-five" label="Route Five" path="/route-five" render={() => <Component5 />} />
-          <MapRoute exact name="route-six" label="Route Six" path="/route-six" render={() => <Component6 />} />
-          <Grouping prefix="/level-two" layout={LayoutB}>
-            <MapRoute exact name="route-seven" label="Route Seven" path="/route-seven">
-              <Component7 />
-            </MapRoute>
-            <MapRoute exact name="route-eight" label="Route Eight" path="/route-eight">
-              <Component8 />
-            </MapRoute>
-            <MapRoute exact name="route-nine" label="Route Nine" path="/route-nine">
-              <Component9 />
-            </MapRoute>
-            <NotFoundPage />
-          </Grouping>
-          <NotFoundPage />
-        </Grouping>
-        <NotFoundPage />
-      </Mapping>
+      <MappingProvider {...routes}> // pass all routes into the context
+        <Switch>
+            {
+                Object.values(routes).map((route) => route)
+            }
+        </Switch>
+      </MappingProvider>
     </BrowserRouter>
   );
 };
 ```
 
-# Componentes
+# Components
 
-## **`Mapping`** (Obrigátorio)
+## **`MappingProvider`** (Required)
 
-Responsável pelo contexto funcional da biblioteca, sem ele, toda e qualquer outra funcionalidade será inválida.
-
-## **`MapRoute`** (Obrigátorio)
-
-O `MapRoute` é um componente espelho de `Route`, um componente que faz parte da biblioteca [React Router](https://reactrouter.com/web/guides/quick-start). O que fazemos é apenas um incremento de 2 (duas) propriedades. Sendo elas `name` e `label`, exemplo:
-
-```jsx
-<MapRoute name="home" label="Home" path="/" component={Home} />
-```
-
-## Páginas 04
-
-Como mencionado acima o componente `Switch` da biblioteca [React Router](https://reactrouter.com/web/guides/quick-start) já se encontra incorporado. Para definir uma rota 404 basta criar uma componente `MapRoute` omitindo a propriedade `path`.
-
-```jsx
-<MapRoute component={() => <>404 - Not Found</>} />
-```
-
-### Propriedades
-
-| Propriedade | Tipo | Descrição | Padrão |
-| ------ | ------ | ------ | ------ |
-| name | **String** | Valor chave para identificação da rota | **Obrigtório** | 
-| label | **String** | Título amigável para uso do breadcrumb | **Vázio** |
-| as | **Element** | Este atributo é exclusivo para trabalhar em conjunto com o componente `AuthRoute` da biblioteca [React Router Authenticator](https://www.npmjs.com/package/react-router-authenticator) | **Vázio** |
-
-## **`Grouping`**
-
-O `Grouping` realiza o aninhamento das rotas em seu contexto. Ele recebe 2 (duas) propriedades, `prefix` e `layout`, a seguir explico sua utilização. 
-
-A primeira propriedade `prefix`, recebe um valor `string` de um prefixo para todas as rotas em seu contexto. Isso auxilia o desenvolvedor a não ter redundâcia em novas rotas. 
-
-```jsx
-<Grouping prefix="/level-one">
-  <MapRoute path="/route-four" component={Component4} />
-  <Grouping prefix="level-two">
-    <MapRoute path="/route-seven" component={Component7} />
-  </Grouping>
-</Grouping>
-```
-
-A segunda propriedade `layout`, recebe um componente que pode ser utilizado para incorporar um layout em especial naquele grupo definido. Se você tiver mais de um `Grouping` como filho, os mesmos receberão o layout do `Grouping` pai.
-
-
-```jsx
-<Grouping prefix="/level-one" layout={LayoutA}>
-  <MapRoute path="/route-four" component={Component4} />
-  <Grouping prefix="/level-two">
-    <MapRoute path="/route-seven" component={Component7} />
-  </Grouping>
-</Grouping>
-```
-
-O componente também permite a utilização do mesmo como próprio filho em seu contexto, assim sendo possível realizar vários aninhamentos para rotas e rotas filhas.
-
-### Propriedades
-
-| Propriedade | Tipo | Descrição | Padrão |
-| ------ | ------ | ------ | ------ |
-| prefix | **String** | Prefixo para aninhamento das rotas | **Vázio** | 
-| layout | **Component** | Componente que define um layout em especial para aquele grupo de rotas | **Vázio** |
+Responsible for the functional context of the library, without it, any and all functionality will be invalid.
 
 # Hooks
 
+## **`useMap()`** (Required)
+
+Is the main hook for the proper functioning of the library. It takes only a single argument in its use, an `array` of `objects`, where any and all properties are the same as the `Route` component of the [React Router](https://reactrouter.com/web/guides/quick-start). However, there are 3 new properties to be included that are necessary for the use of the other hooks that will be described later. Its return is an object with each of the routes informed in its argument, each property returned is equivalent to each of the routes informed and all already treated with the `Route` component.
+
+### Properties
+
+| Property | Type | Description | Default |
+| ------ | ------ | ------ | ------ |
+| name | **String** | Key value for route identification | **Required** | 
+| label | **String** | Friendly title for breadcrumb use | **Empty** |
+| as | **Element** | This attribute is unique to work in conjunction with the `AuthRoute` component of the [React Router Authenticator](https://www.npmjs.com/package/react-router-authenticator) library | **Empty** |
+
 ## **`useRoute()`**
 
-O `useRoute` é o hook responsável por lhe permitir acessar o objeto de rotas gerado pela biblioteca. Abaixo descrevo seus métodos:
+Is the hook responsible for allowing you to access the routes object generated by the library. Below I describe their methods:
 
 ## **`all()`**
 
-Este método retorna uma lista com todas as rotas que a aplicação possui, exemplo:
+This method returns a list with all the routes that the application has, for example:
 
 ```jsx
 import { useEffect } from 'react';
@@ -181,52 +160,44 @@ export default () => {
 
 ```json
 {
-  "home": {
-    "path": "/",
-    "label": "Home"
-  },
-  "route-eight": {
-    "path": "/level-one/level-two/route-eight",
-    "label": "Rota 8"
-  },
-  "route-five": {
-    "path": "/level-one/route-five",
-    "label": "Rota 5"
-  },
-  "route-four": {
-    "path": "/level-one/route-four",
-    "label": "Rota 4"
-  },
-  "route-nine": {
-    "path": "/level-one/level-two/route-nine",
-    "label": "Rota 9"
-  },
   "route-one": {
     "path": "/route-one",
-    "label": "Rota 1"
-  },
-  "route-seven": {
-    "path": "/level-one/level-two/route-seven",
-    "label": "Rota 7"
-  },
-  "route-six": {
-    "path": "/level-one/route-six",
-    "label": "Rota 6"
-  },
-  "route-three": {
-    "path": "/route-three",
-    "label": "Rota 3"
+    "label": "Route 1"
   },
   "route-two": {
     "path": "/route-two",
-    "label": "Rota 2"
+    "label": "Route 2"
+  },
+  "route-three": {
+    "path": "/level-one/route-three",
+    "label": "Route 3"
+  },
+  "route-four": {
+    "path": "/level-one/route-four",
+    "label": "Route 4"
+  },
+  "route-five": {
+    "path": "/level-one/level-two/route-five",
+    "label": "Route 5"
+  },
+  "route-six": {
+    "path": "/level-one/level-two/route-six",
+    "label": "Route 6"
+  },
+  "route-nested": {
+    "path": "/level-one/level-two/route-six/route-nested/:id",
+    "label": "Route Nested"
+  },
+  "not-found": {
+    "path": "*",
+    "label": "Not Found"
   }
 }
 ```
 
 ## **`route(name:string, params:object)`**
 
-Esse método possui 2 (duas) funcionalidades distintas, a primeira seria passando um valor para o primeiro argumento `name`, veja abaixo um exemplo prático:
+This method has 2 (two) distinct features, the first would be passing a value to the first `name` argument, see below for a practical example:
 
 ```jsx
 import { useEffect } from 'react';
@@ -237,25 +208,19 @@ export default () => {
   const { route } = useRoute();
 
   useEffect(() => {
-    console.log(route('route-nine'));
+    console.log(route('route-six'));
   }, []);
   ...
 }
 ```
 
-### Retorno
+### Return
 
 ```
-/level-one/level-two/route-nine
+/level-one/level-two/route-six
 ```
 
-A segunda e última funcionalidade, seria um complemento para parâmetros dinâmicos na rota, para realizar uma substituição de valores nas rotas, basta utilizar o segundo argumento `params` como um objeto e colocar a propriedade com o nome do parâmetro desejável e seu respectivo valor, veja o exemplo:
-
-```jsx
-<Grouping prefix="level-one">
-  <MapRoute path="/route-four/:id" component={Component4} />
-</Grouping>
-```
+The second and last feature would be a complement to dynamic parameters in the route, to perform a substitution of values ​​in the routes, just use the second argument `params` as an object and put the property with the name of the desired parameter and its respective value, see the example:
 
 ```jsx
 import { useEffect } from 'react';
@@ -266,7 +231,7 @@ export default () => {
   const { route } = useRoute();
 
   useEffect(() => {
-    console.log(route('route-four', { id : 789 }));
+    console.log(route('route-nested', { id : 789 }));
   }, []);
   ...
 }
@@ -275,12 +240,12 @@ export default () => {
 ### Retorno
 
 ```
-/level-one/route-four/789
+/level-one/level-two/route-six/route-nested/789
 ```
 
 ## **`useBreadcrumb()`**
 
-Como o prórpio nome diz, esse é um hook para breadcrump, sem muito segredo, o mesmo nos retorna uma propriedade chamada `breadcrumb` com um array de objetos, contendo o caminho completo da localização do usuário na aplicação, um exemplo prático, digamos que o usuário se encontra na Rota 9:
+As the name says, this is a hook for breadcrump, without much secret, it returns a property called `breadcrumb` with an array of objects, containing the full path of the user's location in the application, a practical example, let's say the user is on the Nested Route:
 
 ```jsx
 import { useEffect } from 'react';
@@ -297,7 +262,7 @@ export default () => {
 }
 ```
 
-### Retorno
+### Return
 
 ```json
 [
@@ -306,8 +271,12 @@ export default () => {
     "label": "Home"
   },
   {
-    "path": "/level-one/level-two/route-nine", 
-    "label": "Rota 9"
+    "path": "/level-one/level-two/route-six", 
+    "label": "Route Six"
+  },
+  {
+    "path": "/level-one/level-two/route-six/route-nested", 
+    "label": "Route Nested"
   }   
 ]
 ```
