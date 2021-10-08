@@ -110,25 +110,32 @@ var useBreadcrumb = function useBreadcrumb() {
   var _useLocation = reactRouterDom.useLocation(),
       pathname = _useLocation.pathname;
 
-  var breadcrumb = [];
+  var breadcrumb = React.useMemo(function () {
+    var list = [];
 
-  for (var route in routes) {
-    var _routes$route$props = routes[route].props,
-        path = _routes$route$props.path,
-        label = _routes$route$props.label;
-    var match = reactRouterDom.matchPath(pathname, {
-      path: path
-    });
+    for (var route in routes) {
+      var _routes$route$props = routes[route].props,
+          path = _routes$route$props.path,
+          label = _routes$route$props.label;
 
-    if (match) {
-      var url = match.url;
-      breadcrumb.push({
-        path: url,
-        label: label
-      });
+      if (path.length) {
+        var match = reactRouterDom.matchPath(pathname, {
+          path: path,
+          strict: true
+        });
+
+        if (match) {
+          var url = match.url;
+          list.push({
+            path: url,
+            label: label
+          });
+        }
+      }
     }
-  }
 
+    return list;
+  }, [routes]);
   return {
     breadcrumb: breadcrumb
   };

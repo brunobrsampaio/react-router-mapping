@@ -156,7 +156,7 @@ export default () => {
 }
 ```
 
-### Retorno
+### Return
 
 ```json
 {
@@ -237,7 +237,7 @@ export default () => {
 }
 ```
 
-### Retorno
+### Return
 
 ```
 /level-one/level-two/route-six/route-nested/789

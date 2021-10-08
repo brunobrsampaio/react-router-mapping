@@ -1,6 +1,6 @@
 import _defineProperty from '@babel/runtime/helpers/defineProperty';
 import _objectWithoutProperties from '@babel/runtime/helpers/objectWithoutProperties';
-import React, { useContext, createContext, useCallback } from 'react';
+import React, { useContext, createContext, useCallback, useMemo } from 'react';
 import { useLocation, matchPath, Route } from 'react-router-dom';
 import _extends from '@babel/runtime/helpers/extends';
 
@@ -99,25 +99,32 @@ var useBreadcrumb = function useBreadcrumb() {
   var _useLocation = useLocation(),
       pathname = _useLocation.pathname;
 
-  var breadcrumb = [];
+  var breadcrumb = useMemo(function () {
+    var list = [];
 
-  for (var route in routes) {
-    var _routes$route$props = routes[route].props,
-        path = _routes$route$props.path,
-        label = _routes$route$props.label;
-    var match = matchPath(pathname, {
-      path: path
-    });
+    for (var route in routes) {
+      var _routes$route$props = routes[route].props,
+          path = _routes$route$props.path,
+          label = _routes$route$props.label;
 
-    if (match) {
-      var url = match.url;
-      breadcrumb.push({
-        path: url,
-        label: label
-      });
+      if (path.length) {
+        var match = matchPath(pathname, {
+          path: path,
+          strict: true
+        });
+
+        if (match) {
+          var url = match.url;
+          list.push({
+            path: url,
+            label: label
+          });
+        }
+      }
     }
-  }
 
+    return list;
+  }, [routes]);
   return {
     breadcrumb: breadcrumb
   };
