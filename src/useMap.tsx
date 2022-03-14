@@ -20,7 +20,7 @@ const useMap = (routes:IRouteComponent[]) => {
 
             for (let i = 0; i < padLength; i++) {
                 
-                const customPath = `${[ lastPathname, paths[i] ].join('/').replace(/(\/+)/g, '/')}`;
+                const customPath = `${[ lastPathname, paths[i] !== '*' ? paths[i] : '/' ].join('/').replace(/(\/+)/g, '/')}`;
                 
                 if (names[i]) {    
     
