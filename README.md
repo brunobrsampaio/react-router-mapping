@@ -125,11 +125,46 @@ Responsible for the functional context of the library, without it, any and all f
 
 Is the main hook for the proper functioning of the library. It takes only a single argument in its use, an `array` of `objects`, where any and all properties are the same as the `Route` component of the [React Router](https://reactrouter.com/web/guides/quick-start). However, there are 3 new properties to be included that are necessary for the use of the other hooks that will be described later. Its return is an object with each of the routes informed in its argument, each property returned is equivalent to each of the routes informed and all already treated with the `Route` component.
 
+### Double route
+
+It is possible to reuse the same route component, with something I call a "double route". Using the `useMap` hook, just use an array in both `name` and `path`, both need to contain the same number of indices to equalize the routes. Check out the example:
+
+```jsx
+import React, { Suspense } from 'react';
+import { BrowserRouter, Switch } from 'react-router-dom';
+import { MappingProvider, useMap } from 'react-router-mapping';
+
+export default () => {
+
+  const routes = useMap([
+    {
+      exact     : true,
+      name      : [
+        'route-one',
+        'route-1'
+      ],
+      path      : [
+        '/route-one',
+        '/route-1'
+      ],
+      label     : 'Route 1',
+      component : lazy(() => import(/* webpackChunkName: 'route-one' */'./Route1'))
+    }
+  ]);
+
+  return (
+    ...
+  );
+};
+```
+
+It is not recommended to use the "double route" with nesting, it can cause some confusion, because it will always use the last index value of the top route.
+
 ### Properties
 
 | Property | Type | Description | Default |
 | ------ | ------ | ------ | ------ |
-| name | **String** | Key value for route identification | **Required** | 
+| name | **String|Array** | Key value for route identification | **Required** | 
 | label | **String** | Friendly title for breadcrumb use | **Empty** |
 | as | **Element** | This attribute is unique to work in conjunction with the `AuthRoute` component of the [React Router Authenticator](https://www.npmjs.com/package/react-router-authenticator) library | **Empty** |
 
@@ -161,34 +196,42 @@ export default () => {
 ```json
 {
   "route-one": {
+    "name": "route-one",
     "path": "/route-one",
     "label": "Route 1"
   },
   "route-two": {
+    "name": "route-two",
     "path": "/route-two",
     "label": "Route 2"
   },
   "route-three": {
+    "name": "route-three",
     "path": "/level-one/route-three",
     "label": "Route 3"
   },
   "route-four": {
+    "name": "route-four",
     "path": "/level-one/route-four",
     "label": "Route 4"
   },
   "route-five": {
+    "name": "route-five",
     "path": "/level-one/level-two/route-five",
     "label": "Route 5"
   },
   "route-six": {
+    "name": "route-six",
     "path": "/level-one/level-two/route-six",
     "label": "Route 6"
   },
   "route-nested": {
+    "name": "route-nested",
     "path": "/level-one/level-two/route-six/route-nested/:id",
     "label": "Route Nested"
   },
   "not-found": {
+    "name": "not-found",
     "path": "*",
     "label": "Not Found"
   }
@@ -245,7 +288,7 @@ export default () => {
 
 ## **`useBreadcrumb()`**
 
-As the name says, this is a hook for breadcrump, without much secret, it returns a property called `breadcrumb` with an array of objects, containing the full path of the user's location in the application, a practical example, let's say the user is on the Nested Route:
+As the name says, this is a hook for breadcrump, without much secret, it returns an array of objects containing the full path of the user's location in the application, a practical example, let's say the user is on the 'Nested Route':
 
 ```jsx
 import { useEffect } from 'react';
@@ -253,7 +296,7 @@ import { useBreadcrumb } from 'react-router-mapping';
 
 export default () => {
 
-  const { breadcrumb } = useBreadcrumb();
+  const breadcrumb = useBreadcrumb();
 
   useEffect(() => {
     console.log(breadcrumb);
@@ -267,14 +310,12 @@ export default () => {
 ```json
 [
   {
-    "path": "/", 
-    "label": "Home"
-  },
-  {
+    "name": "route-six",
     "path": "/level-one/level-two/route-six", 
     "label": "Route Six"
   },
   {
+    "name": "route-nested",
     "path": "/level-one/level-two/route-six/route-nested", 
     "label": "Route Nested"
   }   

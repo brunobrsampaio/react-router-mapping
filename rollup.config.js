@@ -1,40 +1,42 @@
 import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import external from 'rollup-plugin-peer-deps-external';
-import { eslint } from 'rollup-plugin-eslint';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import typescript from '@rollup/plugin-typescript';
 import pkg from './package.json';
 
 export default {
-    input: './src/index.jsx',
-    external: [ 
+    input : './src/index.ts',
+    external : [ 
         'react', 
-        'react-dom', 
-        'react-router-dom'
+        'react-router'
     ],
-    output: [
+    output : [
         {
-            file: pkg.main,
-            format: 'cjs'
+            sourcemap : false,
+            file : pkg.main,
+            format : 'cjs'
         },
         {
-            file: pkg.module,
-            format: 'esm'
+            sourcemap : false,
+            file : pkg.module,
+            format : 'esm'
         }
     ],
-    plugins: [
+    plugins : [
         nodeResolve({
             browser : true,
             modulesOnly : true
         }),
         external(),
-        eslint(),
         babel({
             babelHelpers : 'runtime',
             exclude : 'node_modules/**',
             extensions: [ 
                 '.js', 
-                '.jsx' 
+                '.jsx',
+                '.ts',
+                '.tsx'
             ]
         }),
         commonjs({
@@ -43,8 +45,13 @@ export default {
             ],
             extensions: [ 
                 '.js', 
-                '.jsx' 
+                '.jsx',
+                '.ts',
+                '.tsx'
             ]
+        }),
+        typescript({ 
+            tsconfig : './tsconfig.json' 
         })
     ]
 };

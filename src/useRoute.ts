@@ -1,5 +1,20 @@
-import { useCallback } from 'react';
-import { useMappingContext } from '../MappingProvider';
+import { useCallback, FunctionComponent } from 'react';
+import { RouteProps, useParams } from 'react-router';
+import invariant from 'invariant';
+import { useMappingContext } from './MappingProvider';
+
+export interface IRoute {
+    path:string;
+    name:string;
+    label:string;
+}
+
+export interface IRouteComponent extends RouteProps {
+    name:string;
+    label:string;
+    routes?:IRoute[];
+    as?:FunctionComponent<RouteProps>;
+}
 
 /**
  * Hook customizado para uso das rotas mapeadas
@@ -7,6 +22,10 @@ import { useMappingContext } from '../MappingProvider';
 const useRoute = () => {
 	
     const routes = useMappingContext();
+
+    invariant(Object.values(routes).length, 'You should not use "useRoute" outside a <MappingProvider>');
+
+    const routeParams = useParams();
 
     const lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
 
@@ -16,7 +35,7 @@ const useRoute = () => {
 	 * @param {String} name - Chave de identificação da rota
 	 * @param {Object} params - Objeto de parâmetros para substituição nas rotas
 	 */
-    const route = useCallback((name, params) => {
+    const route = useCallback((name:string, params:Record<string, string>):string => {
 
         if (!name) {
 
@@ -28,13 +47,15 @@ const useRoute = () => {
             if (routes[name]) {
 
                 const { props : { path } } = routes[name];
-	
-                let pathname = path[0];
-		
+
+                let pathname = String(path || '');
+
+                params = { ...routeParams, ...params };
+
                 for (const param in params) {
 	
                     const regExp = new RegExp(`(\\:${param}\\??)`, 'g');
-	
+                    
                     pathname = pathname.replace(regExp, params[param]);
                 }
 	
@@ -43,24 +64,25 @@ const useRoute = () => {
         }
 
         return '';
-    }, [ routes ]);
+    }, [ routes, routeParams ]);
 
     /**
 	 * Lista todas as rotas da aplicação
 	 */
-    const all = useCallback(() => {
+    const all = useCallback(():Record<string, IRoute> => {
 
-        const list = {};
+        const list:Record<string, IRoute> = {};
 
-        for (var route in routes) {
+        for (const route in routes) {
 			
             const { props : { path, label } } = routes[route];
 
-            if (path.length) {
+            if (path && path.length) {
 
                 list[route] = {
+                    name : route,
                     label,
-                    path : path[0].replace(lastParamExp, '')
+                    path : String(path || '').replace(lastParamExp, '')
                 };
             }
         }

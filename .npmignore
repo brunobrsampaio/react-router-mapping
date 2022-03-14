@@ -4,4 +4,5 @@
 .gitignore
 .npmignore
 rollup.config.js
-package-locj.json
+package-lock.json
+tsconfig.json
