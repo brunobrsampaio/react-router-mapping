@@ -295,7 +295,7 @@ var useMap = function useMap(routes) {
       }));
 
       for (var i = 0; i < padLength; i++) {
-        var customPath = "".concat([lastPathname, paths[i]].join('/').replace(/(\/+)/g, '/'));
+        var customPath = "".concat([lastPathname, paths[i] !== '*' ? paths[i] : '/'].join('/').replace(/(\/+)/g, '/'));
 
         if (names[i]) {
           var As = as || Route;
