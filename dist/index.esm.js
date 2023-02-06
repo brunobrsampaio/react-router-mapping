@@ -1,5 +1,5 @@
-import React, { useContext, createContext, useCallback, useMemo } from 'react';
-import { useParams, useLocation, matchPath, Route } from 'react-router';
+import React, { createContext, useContext, useCallback, useMemo } from 'react';
+import { useParams, useLocation, matchPath, Route } from 'react-router-dom';
 
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -19,8 +19,47 @@ function commonjsRequire () {
 	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
 }
 
+var _typeof_1 = createCommonjsModule(function (module) {
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(obj);
+}
+module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
+});
+
+var toPrimitive = createCommonjsModule(function (module) {
+var _typeof = _typeof_1["default"];
+function _toPrimitive(input, hint) {
+  if (_typeof(input) !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if (_typeof(res) !== "object") return res;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return (hint === "string" ? String : Number)(input);
+}
+module.exports = _toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
+});
+
+var toPropertyKey = createCommonjsModule(function (module) {
+var _typeof = _typeof_1["default"];
+
+function _toPropertyKey(arg) {
+  var key = toPrimitive(arg, "string");
+  return _typeof(key) === "symbol" ? key : String(key);
+}
+module.exports = _toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
+});
+
 var defineProperty = createCommonjsModule(function (module) {
 function _defineProperty(obj, key, value) {
+  key = toPropertyKey(key);
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -31,10 +70,8 @@ function _defineProperty(obj, key, value) {
   } else {
     obj[key] = value;
   }
-
   return obj;
 }
-
 module.exports = _defineProperty, module.exports.__esModule = true, module.exports["default"] = module.exports;
 });
 
@@ -46,16 +83,13 @@ function _objectWithoutPropertiesLoose(source, excluded) {
   var target = {};
   var sourceKeys = Object.keys(source);
   var key, i;
-
   for (i = 0; i < sourceKeys.length; i++) {
     key = sourceKeys[i];
     if (excluded.indexOf(key) >= 0) continue;
     target[key] = source[key];
   }
-
   return target;
 }
-
 module.exports = _objectWithoutPropertiesLoose, module.exports.__esModule = true, module.exports["default"] = module.exports;
 });
 
@@ -64,10 +98,8 @@ function _objectWithoutProperties(source, excluded) {
   if (source == null) return {};
   var target = objectWithoutPropertiesLoose(source, excluded);
   var key, i;
-
   if (Object.getOwnPropertySymbols) {
     var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
     for (i = 0; i < sourceSymbolKeys.length; i++) {
       key = sourceSymbolKeys[i];
       if (excluded.indexOf(key) >= 0) continue;
@@ -75,19 +107,15 @@ function _objectWithoutProperties(source, excluded) {
       target[key] = source[key];
     }
   }
-
   return target;
 }
-
 module.exports = _objectWithoutProperties, module.exports.__esModule = true, module.exports["default"] = module.exports;
 });
 
 var _objectWithoutProperties = /*@__PURE__*/getDefaultExportFromCjs(objectWithoutProperties);
 
 var _excluded$1 = ["children"];
-
 function ownKeys$2(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread$2(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$2(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$2(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var MappingContext = /*#__PURE__*/createContext({});
 var useMappingContext = function useMappingContext() {
@@ -96,16 +124,13 @@ var useMappingContext = function useMappingContext() {
 /**
  * Contexto do agrupador
  */
-
 var MappingProvider = function MappingProvider(_ref) {
   var children = _ref.children,
-      rest = _objectWithoutProperties(_ref, _excluded$1);
-
+    rest = _objectWithoutProperties(_ref, _excluded$1);
   return /*#__PURE__*/React.createElement(MappingContext.Provider, {
     value: _objectSpread$2({}, rest)
   }, children);
 };
-
 MappingProvider.displayName = 'MappingProvider';
 
 /**
@@ -159,58 +184,48 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 var invariant_1 = invariant;
 
 function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$1(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$1(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+var lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
 /**
  * Hook customizado para uso das rotas mapeadas
  */
-
 var useRoute = function useRoute() {
   var routes = useMappingContext();
   invariant_1(Object.values(routes).length, 'You should not use "useRoute" outside a <MappingProvider>');
   var routeParams = useParams();
-  var lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
   /**
    * Resgata uma rota em especifica quando o arumento "name" for informado
    *
    * @param {String} name - Chave de identificação da rota
    * @param {Object} params - Objeto de parâmetros para substituição nas rotas
    */
-
   var route = useCallback(function (name, params) {
     if (!name) {
       throw '\'Name\' argument not reported';
     }
-
     if (Object.keys(routes).length) {
       if (routes[name]) {
         var path = routes[name].props.path;
-        var pathname = String(path || '');
+        var pathname = path || '';
         params = _objectSpread$1(_objectSpread$1({}, routeParams), params);
-
         for (var param in params) {
           var regExp = new RegExp("(\\:".concat(param, "\\??)"), 'g');
-          pathname = pathname.replace(regExp, params[param]);
+          pathname = pathname.replace(regExp, String(params[param]));
         }
-
         return pathname.replace(lastParamExp, '');
       }
     }
-
     return '';
   }, [routes, routeParams]);
   /**
    * Lista todas as rotas da aplicação
    */
-
   var all = useCallback(function () {
     var list = {};
-
     for (var _route in routes) {
       var _routes$_route$props = routes[_route].props,
-          path = _routes$_route$props.path,
-          label = _routes$_route$props.label;
-
+        path = _routes$_route$props.path,
+        label = _routes$_route$props.label;
       if (path && path.length) {
         list[_route] = {
           name: _route,
@@ -219,7 +234,6 @@ var useRoute = function useRoute() {
         };
       }
     }
-
     return list;
   }, [routes]);
   return {
@@ -231,83 +245,58 @@ var useRoute = function useRoute() {
 /**
  * Hook customizado para o usuo de um bread crumb em conjunto com o mapeador
  */
-
 var useBreadcrumb = function useBreadcrumb() {
   var routes = useMappingContext();
   invariant_1(Object.values(routes).length, 'You should not use "useBreadcrumb" outside a <MappingProvider>');
-
   var _useLocation = useLocation(),
-      pathname = _useLocation.pathname;
-
+    pathname = _useLocation.pathname;
   var breadcrumb = useMemo(function () {
     var list = [];
-
     for (var route in routes) {
       var _routes$route$props = routes[route].props,
-          path = _routes$route$props.path,
-          label = _routes$route$props.label;
-
+        path = _routes$route$props.path,
+        label = _routes$route$props.label;
       if (label && path && path.length && path !== '/') {
-        var match = matchPath(pathname, {
-          strict: true,
-          path: String(path || '')
-        });
-
+        var match = matchPath({
+          path: String(path || ''),
+          end: false
+        }, pathname);
         if (match) {
           list.push({
             name: route,
-            path: match.path,
+            path: match.pathname,
             label: label
           });
         }
       }
     }
-
     return list;
   }, [routes, pathname]);
   return breadcrumb;
 };
 
 var _excluded = ["routes", "as", "name", "path"];
-
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-
 var useMap = function useMap(routes) {
   var routesList = {};
-  var recursiveRoutes = useCallback(function (list, lastPathname) {
+  var recursiveRoutes = useCallback(function (list, previousPathname) {
     list.forEach(function (_ref) {
       var routes = _ref.routes,
-          as = _ref.as,
-          name = _ref.name,
-          path = _ref.path,
-          rest = _objectWithoutProperties(_ref, _excluded);
-
-      var paths = Array.of(path).flat();
-      var names = Array.of(name).flat();
-      var padLength = Math.max(names.length, paths.length);
-      paths = Array.from(_objectSpread(_objectSpread({}, paths), {}, {
-        length: padLength
-      }));
-      names = Array.from(_objectSpread(_objectSpread({}, names), {}, {
-        length: padLength
-      }));
-
-      for (var i = 0; i < padLength; i++) {
-        var customPath = "".concat([lastPathname, paths[i] !== '*' ? paths[i] : '/'].join('/').replace(/(\/+)/g, '/'));
-
-        if (names[i]) {
-          var As = as || Route;
-          routesList[names[i]] = /*#__PURE__*/React.createElement(As, _objectSpread(_objectSpread({}, rest), {}, {
-            key: names[i],
-            path: customPath
-          }));
-        }
-
-        if (routes) {
-          routesList = _objectSpread(_objectSpread({}, routesList), recursiveRoutes(routes, customPath));
-        }
+        as = _ref.as,
+        name = _ref.name,
+        path = _ref.path,
+        rest = _objectWithoutProperties(_ref, _excluded);
+      var customPath = "".concat([previousPathname, path !== '*' ? path : '/'].join('/').replace(/(\/+)/g, '/'));
+      if (name) {
+        var As = as || Route;
+        routesList[name] = /*#__PURE__*/React.createElement(As, _objectSpread(_objectSpread({}, rest), {}, {
+          key: path,
+          path: customPath
+        }));
+      }
+      if (routes) {
+        routesList = _objectSpread(_objectSpread({}, routesList), recursiveRoutes(routes, customPath));
       }
     });
     return routesList;
@@ -316,3 +305,4 @@ var useMap = function useMap(routes) {
 };
 
 export { MappingProvider, useBreadcrumb, useMap, useRoute };
+//# sourceMappingURL=index.esm.js.map

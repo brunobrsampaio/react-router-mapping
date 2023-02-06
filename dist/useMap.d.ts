@@ -1,7 +1,5 @@
 import React from 'react';
-import { RouteProps } from 'react-router';
-import { IRouteComponent } from './useRoute';
-declare const useMap: (routes: IRouteComponent[]) => Record<string, React.ReactElement<RouteProps<string, {
-    [x: string]: string | undefined;
-}>, string | React.JSXElementConstructor<any>>>;
+import { RouteProps } from 'react-router-dom';
+import { IRouteProps } from './useRoute/interfaces';
+declare const useMap: (routes: IRouteProps[]) => Record<string, React.ReactElement<RouteProps, string | React.JSXElementConstructor<any>>>;
 export default useMap;

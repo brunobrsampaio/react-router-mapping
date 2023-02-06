@@ -1,41 +1,32 @@
 import React, { useCallback } from 'react';
-import { Route, RouteProps } from 'react-router';
-import { IRouteComponent } from './useRoute';
+import { Route, RouteProps } from 'react-router-dom';
 
-const useMap = (routes:IRouteComponent[]) => {
+// Interfaces
+import { IRouteProps } from './useRoute/interfaces';
+
+const useMap = (routes:IRouteProps[]) => {
 
     let routesList:Record<string, React.ReactElement<RouteProps>> = {};
 
-    const recursiveRoutes = useCallback((list:IRouteComponent[], lastPathname?:string) => {
+    const recursiveRoutes = useCallback((list:IRouteProps[], previousPathname?:string) => {
 
         list.forEach(({ routes, as, name, path, ...rest }) => {
 
-            let paths = Array.of(path).flat();
-            let names = Array.of(name).flat();
+            const customPath = `${[ previousPathname, path !== '*' ? path : '/' ].join('/').replace(/(\/+)/g, '/')}`;
+            
+            if (name) {    
 
-            const padLength = Math.max(names.length, paths.length);
+                const As = as || Route;
 
-            paths = Array.from({ ...paths, length : padLength });
-            names = Array.from({ ...names, length : padLength });
+                routesList[name] = <As {...rest} key={path} path={customPath} />;
+            }
 
-            for (let i = 0; i < padLength; i++) {
+            if (routes) {
                 
-                const customPath = `${[ lastPathname, paths[i] !== '*' ? paths[i] : '/' ].join('/').replace(/(\/+)/g, '/')}`;
-                
-                if (names[i]) {    
-    
-                    const As = as || Route;
-
-                    routesList[names[i]] = <As {...rest} key={names[i]} path={customPath} />;
-                }
-
-                if (routes) {
-                    
-                    routesList = {
-                        ...routesList,
-                        ...recursiveRoutes(routes, customPath)
-                    };
-                }
+                routesList = {
+                    ...routesList,
+                    ...recursiveRoutes(routes, customPath)
+                };
             }
         });
 

@@ -1,20 +1,14 @@
-import { useCallback, FunctionComponent } from 'react';
-import { RouteProps, useParams } from 'react-router';
+import { useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import invariant from 'invariant';
-import { useMappingContext } from './MappingProvider';
 
-export interface IRoute {
-    path:string;
-    name:string;
-    label:string;
-}
+// Contexts
+import { useMappingContext } from '../MappingProvider';
 
-export interface IRouteComponent extends RouteProps {
-    name:string;
-    label:string;
-    routes?:IRoute[];
-    as?:FunctionComponent<RouteProps>;
-}
+// Interfaces
+import { IRouteProps } from './interfaces';
+
+const lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
 
 /**
  * Hook customizado para uso das rotas mapeadas
@@ -27,15 +21,13 @@ const useRoute = () => {
 
     const routeParams = useParams();
 
-    const lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
-
     /**
 	 * Resgata uma rota em especifica quando o arumento "name" for informado
 	 * 
 	 * @param {String} name - Chave de identificação da rota
 	 * @param {Object} params - Objeto de parâmetros para substituição nas rotas
 	 */
-    const route = useCallback((name:string, params:Record<string, string>):string => {
+    const route = useCallback((name:string, params:Record<string, unknown>):string => {
 
         if (!name) {
 
@@ -48,7 +40,7 @@ const useRoute = () => {
 
                 const { props : { path } } = routes[name];
 
-                let pathname = String(path || '');
+                let pathname = (path || '');
 
                 params = { ...routeParams, ...params };
 
@@ -56,7 +48,7 @@ const useRoute = () => {
 	
                     const regExp = new RegExp(`(\\:${param}\\??)`, 'g');
                     
-                    pathname = pathname.replace(regExp, params[param]);
+                    pathname = pathname.replace(regExp, String(params[param]));
                 }
 	
                 return pathname.replace(lastParamExp, '');
@@ -69,9 +61,9 @@ const useRoute = () => {
     /**
 	 * Lista todas as rotas da aplicação
 	 */
-    const all = useCallback(():Record<string, IRoute> => {
+    const all = useCallback(():Record<string, IRouteProps> => {
 
-        const list:Record<string, IRoute> = {};
+        const list:Record<string, IRouteProps> = {};
 
         for (const route in routes) {
 			

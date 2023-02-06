@@ -13,12 +13,12 @@ export default {
     ],
     output : [
         {
-            sourcemap : false,
+            sourcemap : true,
             file : pkg.main,
             format : 'cjs'
         },
         {
-            sourcemap : false,
+            sourcemap : true,
             file : pkg.module,
             format : 'esm'
         }

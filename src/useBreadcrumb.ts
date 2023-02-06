@@ -1,8 +1,12 @@
 import { useMemo } from 'react';
-import { matchPath, useLocation } from 'react-router';
+import { matchPath, useLocation } from 'react-router-dom';
 import invariant from 'invariant';
+
+// Contexts
 import { useMappingContext } from './MappingProvider';
-import { IRoute } from './useRoute';
+
+// Interfaces
+import { IRouteProps } from './useRoute/interfaces';
 
 /**
  * Hook customizado para o usuo de um bread crumb em conjunto com o mapeador
@@ -15,9 +19,9 @@ const useBreadcrumb = () => {
 
     const { pathname } = useLocation();
 
-    const breadcrumb = useMemo(():IRoute[] => {
+    const breadcrumb = useMemo(():IRouteProps[] => {
 
-        const list:IRoute[] = [];
+        const list:IRouteProps[] = [];
 
         for (const route in routes) {
 
@@ -25,16 +29,16 @@ const useBreadcrumb = () => {
             
             if (label && path && path.length && path !== '/') {
 
-                const match = matchPath(pathname, {
-                    strict : true,
-                    path : String(path || '')
-                });
+                const match = matchPath({
+                    path: String(path || ''),
+                    end: false
+                }, pathname);
 
                 if (match) {
 
                     list.push({ 
                         name : route, 
-                        path : match.path, 
+                        path : match.pathname, 
                         label 
                     });
                 }

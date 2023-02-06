@@ -15,7 +15,7 @@ npm install react-router-mapping
 # How to use
 
 ```jsx
-import React, { Suspense } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import { MappingProvider, useMap } from 'react-router-mapping';
 
@@ -25,7 +25,7 @@ export default () => {
     {
       exact     : true,
       name      : 'home',
-      path      : ['/', '/home'],
+      path      : '/home',
       label     : 'Home',
       component : lazy(() => import(/* webpackChunkName: 'Home' */'./Home'))
     },
@@ -75,7 +75,7 @@ export default () => {
               name      : 'route-six',
               path      : '/route-six',
               label     : 'Route 6',
-              component : () => <>Route 6</>
+              component : () => <>Route 6</>,
               routes    : [
                 {
                   exact     : true,
@@ -101,13 +101,15 @@ export default () => {
 
   return (
     <BrowserRouter>
-      <MappingProvider {...routes}> // pass all routes into the context
-        <Switch>
-            {
-                Object.values(routes).map((route) => route)
-            }
-        </Switch>
-      </MappingProvider>
+      <Suspense fallback={<>Loading...</>}>
+        <MappingProvider {...routes}> // pass all routes into the context
+          <Switch>
+              {
+                  Object.values(routes).map((route) => route)
+              }
+          </Switch>
+        </MappingProvider>
+      </Suspense>
     </BrowserRouter>
   );
 };
@@ -124,41 +126,6 @@ Responsible for the functional context of the library, without it, any and all f
 ## **`useMap()`** (Required)
 
 Is the main hook for the proper functioning of the library. It takes only a single argument in its use, an `array` of `objects`, where any and all properties are the same as the `Route` component of the [React Router](https://reactrouter.com/web/guides/quick-start). However, there are 3 new properties to be included that are necessary for the use of the other hooks that will be described later. Its return is an object with each of the routes informed in its argument, each property returned is equivalent to each of the routes informed and all already treated with the `Route` component.
-
-### Double route
-
-It is possible to reuse the same route component, with something I call a "double route". Using the `useMap` hook, just use an array in both `name` and `path`, both need to contain the same number of indices to equalize the routes. Check out the example:
-
-```jsx
-import React, { Suspense } from 'react';
-import { BrowserRouter, Switch } from 'react-router-dom';
-import { MappingProvider, useMap } from 'react-router-mapping';
-
-export default () => {
-
-  const routes = useMap([
-    {
-      exact     : true,
-      name      : [
-        'route-one',
-        'route-1'
-      ],
-      path      : [
-        '/route-one',
-        '/route-1'
-      ],
-      label     : 'Route 1',
-      component : lazy(() => import(/* webpackChunkName: 'route-one' */'./Route1'))
-    }
-  ]);
-
-  return (
-    ...
-  );
-};
-```
-
-It is not recommended to use the "double route" with nesting, it can cause some confusion, because it will always use the last index value of the top route.
 
 ### Properties
 
