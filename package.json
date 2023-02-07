@@ -1,13 +1,20 @@
 {
     "name": "react-router-mapping",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "description": "This library has as auxiliary tools the developers to have a better way to map, group and manage the routes of their applications.",
     "main": "./dist/index.cjs.js",
     "module": "./dist/index.esm.js",
-    "types": "./dist/index.d.js",
+    "types": "./dist/index.d.ts",
     "exports": {
-        "." : "./dist/index.cjs.js"
+        ".": {
+            "main": "./dist/index.cjs.js",
+            "module": "./dist/index.esm.js",
+            "types": "./dist/index.d.ts"
+        }
     },
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "watch": "rollup -c -w",
         "build": "rollup -c"
@@ -53,9 +60,6 @@
         "rollup-plugin-peer-deps-external": "^2.2.3",
         "typescript": "^4.5.5"
     },
-    "files": [
-        "dist/"
-    ],
     "bugs": {
         "url": "https://github.com/brunobrsampaio/react-router-mapping/issues"
     },

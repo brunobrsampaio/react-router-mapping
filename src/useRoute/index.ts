@@ -27,7 +27,7 @@ const useRoute = () => {
 	 * @param {String} name - Chave de identificação da rota
 	 * @param {Object} params - Objeto de parâmetros para substituição nas rotas
 	 */
-    const route = useCallback((name:string, params:Record<string, unknown>):string => {
+    const route = useCallback((name:string, params?:Record<string, unknown>):string => {
 
         if (!name) {
 
