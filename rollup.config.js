@@ -6,52 +6,52 @@ import typescript from '@rollup/plugin-typescript';
 import pkg from './package.json';
 
 export default {
-    input : './src/index.ts',
-    external : [ 
-        'react', 
-        'react-router'
-    ],
-    output : [
-        {
-            sourcemap : true,
-            file : pkg.main,
-            format : 'cjs'
-        },
-        {
-            sourcemap : true,
-            file : pkg.module,
-            format : 'esm'
-        }
-    ],
-    plugins : [
-        nodeResolve({
-            browser : true,
-            modulesOnly : true
-        }),
-        external(),
-        babel({
-            babelHelpers : 'runtime',
-            exclude : 'node_modules/**',
-            extensions: [ 
-                '.js', 
-                '.jsx',
-                '.ts',
-                '.tsx'
-            ]
-        }),
-        commonjs({
-            include: [ 
-                'node_modules/**' 
-            ],
-            extensions: [ 
-                '.js', 
-                '.jsx',
-                '.ts',
-                '.tsx'
-            ]
-        }),
-        typescript({ 
-            tsconfig : './tsconfig.json' 
-        })
-    ]
+  input : './src/index.ts',
+  external : [ 
+    'react', 
+    'react-router'
+  ],
+  output : [
+    {
+      sourcemap : true,
+      file : pkg.main,
+      format : 'cjs'
+    },
+    {
+      sourcemap : true,
+      file : pkg.module,
+      format : 'esm'
+    }
+  ],
+  plugins : [
+    nodeResolve({
+      browser : true,
+      modulesOnly : true
+    }),
+    external(),
+    babel({
+      babelHelpers : 'runtime',
+      exclude : 'node_modules/**',
+      extensions: [ 
+        '.js', 
+        '.jsx',
+        '.ts',
+        '.tsx'
+      ]
+    }),
+    commonjs({
+      include: [ 
+        'node_modules/**' 
+      ],
+      extensions: [ 
+        '.js', 
+        '.jsx',
+        '.ts',
+        '.tsx'
+      ]
+    }),
+    typescript({ 
+      tsconfig : './tsconfig.json' 
+    })
+  ]
 };

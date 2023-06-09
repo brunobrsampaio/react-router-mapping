@@ -1,6 +1,3 @@
-import { IRouteProps } from './useRoute/interfaces';
-/**
- * Hook customizado para o usuo de um bread crumb em conjunto com o mapeador
- */
-declare const useBreadcrumb: () => IRouteProps[];
+import { IRouteMap } from './useMap/interfaces';
+declare const useBreadcrumb: () => IRouteMap[];
 export default useBreadcrumb;

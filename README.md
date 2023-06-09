@@ -15,101 +15,93 @@ npm install react-router-mapping
 # How to use
 
 ```jsx
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Switch } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes } from 'react-router-dom';
 import { MappingProvider, useMap } from 'react-router-mapping';
 
 export default () => {
 
-  const routes = useMap([
+  const [ MainRoutes, mapRoutes ] = useMap([
     {
-      exact     : true,
-      name      : 'home',
-      path      : '/home',
-      label     : 'Home',
-      component : lazy(() => import(/* webpackChunkName: 'Home' */'./Home'))
+      name : 'home',
+      label : 'Home',
+      path : '/',
+      element : <Home />,
     },
     {
-      exact     : true,
-      name      : 'route-one',
-      path      : '/route-one',
-      label     : 'Route 1',
-      component : lazy(() => import(/* webpackChunkName: 'route-one' */'./Route1'))
-    },
-    {
-      exact     : true,
-      name      : 'route-two',
-      path      : '/route-two',
-      label     : 'Route 2',
-      component : lazy(() => import(/* webpackChunkName: 'route-two' */'./Route2')),
-    },
-    {
-      path    : '/level-one',
-      routes  : [
+      path : '/route-one',
+      element : <Template />,
+      routes : [
         {
-          exact     : true,
-          name      : 'route-three',
-          path      : '/route-three',
-          label     : 'Route 3',
-          component : lazy(() => import(/* webpackChunkName: 'route-three' */'./Route3')),
+          name : 'route-one',
+          label : 'Route One',
+          element : <RouteOne />,
+          index : true,
         },
         {
-          exact     : true,
-          name      : 'route-four',
-          path      : '/route-four',
-          label     : 'Route 4',
-          component : lazy(() => import(/* webpackChunkName: 'route-four' */'./Route4')),
+          name : 'sub-route-one',
+          label : 'Sub Route One',
+          path : 'sub-route-one',
+          element : <SubRouteOne />,
         },
-        {
-          path    : '/level-two',
-          routes  : [
-            {
-              exact     : true,
-              name      : 'route-five',
-              path      : '/route-five',
-              label     : 'Route 5',
-              component : () => <>Route 5</>
-            },
-            {
-              exact     : true,
-              name      : 'route-six',
-              path      : '/route-six',
-              label     : 'Route 6',
-              component : () => <>Route 6</>,
-              routes    : [
-                {
-                  exact     : true,
-                  name      : 'route-nested',
-                  path      : '/route-nested/:id',
-                  label     : 'Route Nested',
-                  component : () => <>Route Nested</>
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      exact     : true,
-      name      : 'not-found',
-      path      : '*',
-      label     : 'Not Found',
-      component : () => <>Not Found</>
+      ],
+      {
+        path : '/:id',
+        routes : [
+          {
+            name : 'route-two',
+            label : 'Route Two',
+            element : <RouteTwo />,
+            index : true,
+          },
+          {
+            name : 'sub-route-two',
+            label : 'Sub Route Two',
+            path : 'sub-route-two',
+            element : <SubRouteTwo />,
+          },
+        ],
+      },
     }
   ]);
 
   return (
     <BrowserRouter>
-      <Suspense fallback={<>Loading...</>}>
-        <MappingProvider {...routes}> // pass all routes into the context
-          <Switch>
-              {
-                  Object.values(routes).map((route) => route)
-              }
-          </Switch>
-        </MappingProvider>
-      </Suspense>
+      <MappingProvider routes={mapRoutes}>
+        <Routes>
+          {MainRoutes}
+        </Routes>
+      </MappingProvider>
+    </BrowserRouter>
+  );
+};
+```
+
+## With multiple maps
+
+```jsx
+import React from 'react';
+import { BrowserRouter, Routes } from 'react-router-dom';
+import { MappingProvider, useMap } from 'react-router-mapping';
+
+export default () => {
+
+  const [ MainRoutes, mapRoutes ] = useMap([
+    ...
+  ]);
+
+  const [ OtherRoutes, otherMapRoutes ] = useMap([
+    ...
+  ]);
+
+  return (
+    <BrowserRouter>
+      <MappingProvider routes={[ mapRoutes, otlherMapRoutes ]}>
+        <Routes>
+          {MainRoutes}
+          {OtherRoutes}
+        </Routes>
+      </MappingProvider>
     </BrowserRouter>
   );
 };
@@ -121,19 +113,24 @@ export default () => {
 
 Responsible for the functional context of the library, without it, any and all functionality will be invalid.
 
+### Properties
+
+| Property | Type | Description | Default |
+| ------ | ------ | ------ | ------ |
+| routes | **Object/Array** | Receives an `object` or an `array` of Map objects, which is created by the `useMap` hook, which contains the handled routes to be served by the context. | **Required** | 
+
 # Hooks
 
 ## **`useMap()`** (Required)
 
-Is the main hook for the proper functioning of the library. It takes only a single argument in its use, an `array` of `objects`, where any and all properties are the same as the `Route` component of the [React Router](https://reactrouter.com/web/guides/quick-start). However, there are 3 new properties to be included that are necessary for the use of the other hooks that will be described later. Its return is an object with each of the routes informed in its argument, each property returned is equivalent to each of the routes informed and all already treated with the `Route` component.
+Is the main hook for the proper functioning of the library. It takes only a single argument in its use, an `array` of `objects`, where any and all properties are the same as the `Route` component of the [React Router](https://reactrouter.com/web/guides/quick-start). However, there are 2 new properties to be included that are necessary for the use of the other hooks that will be described later. Its return is an object with each of the routes informed in its argument, each property returned is equivalent to each of the routes informed and all already treated with the `Route` component.
 
 ### Properties
 
 | Property | Type | Description | Default |
 | ------ | ------ | ------ | ------ |
-| name | **String|Array** | Key value for route identification | **Required** | 
+| name | **String** | Key value for route identification | **Required** | 
 | label | **String** | Friendly title for breadcrumb use | **Empty** |
-| as | **Element** | This attribute is unique to work in conjunction with the `AuthRoute` component of the [React Router Authenticator](https://www.npmjs.com/package/react-router-authenticator) library | **Empty** |
 
 ## **`useRoute()`**
 
@@ -162,46 +159,31 @@ export default () => {
 
 ```json
 {
+  "home": {
+    "name": "home",
+    "path": "/",
+    "label": "Home"
+  },
   "route-one": {
     "name": "route-one",
     "path": "/route-one",
-    "label": "Route 1"
+    "label": "Route One"
+  },
+  "sub-route-one": {
+    "name": "sub-route-one",
+    "path": "/route-one/sub-route-one",
+    "label": "Sub Route One"
   },
   "route-two": {
     "name": "route-two",
-    "path": "/route-two",
-    "label": "Route 2"
+    "path": "/:id/route-two",
+    "label": "Route Two"
   },
-  "route-three": {
-    "name": "route-three",
-    "path": "/level-one/route-three",
-    "label": "Route 3"
+  "sub-route-two": {
+    "name": "sub-route-two",
+    "path": "/:id/route-two/sub-route-two",
+    "label": "Sub Route Two"
   },
-  "route-four": {
-    "name": "route-four",
-    "path": "/level-one/route-four",
-    "label": "Route 4"
-  },
-  "route-five": {
-    "name": "route-five",
-    "path": "/level-one/level-two/route-five",
-    "label": "Route 5"
-  },
-  "route-six": {
-    "name": "route-six",
-    "path": "/level-one/level-two/route-six",
-    "label": "Route 6"
-  },
-  "route-nested": {
-    "name": "route-nested",
-    "path": "/level-one/level-two/route-six/route-nested/:id",
-    "label": "Route Nested"
-  },
-  "not-found": {
-    "name": "not-found",
-    "path": "*",
-    "label": "Not Found"
-  }
 }
 ```
 
@@ -218,7 +200,7 @@ export default () => {
   const { route } = useRoute();
 
   useEffect(() => {
-    console.log(route('route-six'));
+    console.log(route('sub-route-one'));
   }, []);
   ...
 }
@@ -227,7 +209,7 @@ export default () => {
 ### Return
 
 ```
-/level-one/level-two/route-six
+/route-one/sub-route-one
 ```
 
 The second and last feature would be a complement to dynamic parameters in the route, to perform a substitution of values ​​in the routes, just use the second argument `params` as an object and put the property with the name of the desired parameter and its respective value, see the example:
@@ -241,7 +223,8 @@ export default () => {
   const { route } = useRoute();
 
   useEffect(() => {
-    console.log(route('route-nested', { id : 789 }));
+    console.log('Without params: ', route('sub-route-two'));
+    console.log('With params: ', route('sub-route-two', { id : 'DEF-456' }));
   }, []);
   ...
 }
@@ -250,7 +233,9 @@ export default () => {
 ### Return
 
 ```
-/level-one/level-two/route-six/route-nested/789
+Without params: /ABC-123/route-two/sub-route-two
+...
+With params: /DEF-456/route-two/sub-route-two
 ```
 
 ## **`useBreadcrumb()`**
@@ -277,14 +262,19 @@ export default () => {
 ```json
 [
   {
-    "name": "route-six",
-    "path": "/level-one/level-two/route-six", 
-    "label": "Route Six"
+    "name": "home",
+    "path": "/",
+    "label": "Home",
   },
   {
-    "name": "route-nested",
-    "path": "/level-one/level-two/route-six/route-nested", 
-    "label": "Route Nested"
-  }   
+    "name": "route-one",
+    "path": "/route-one",
+    "label": "Route One"
+  },
+  {
+    "name": "sub-route-one",
+    "path": "/route-one/sub-route-one",
+    "label": "Sub Route One"
+  }
 ]
 ```

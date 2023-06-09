@@ -1,9 +1,3 @@
-import { IRouteProps } from './interfaces';
-/**
- * Hook customizado para uso das rotas mapeadas
- */
-declare const useRoute: () => {
-    route: (name: string, params?: Record<string, unknown>) => string;
-    all: () => Record<string, IRouteProps>;
-};
+import { IUseRoute } from './interfaces';
+declare const useRoute: () => IUseRoute;
 export default useRoute;

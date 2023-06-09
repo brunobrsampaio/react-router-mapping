@@ -1,54 +1,51 @@
 import { useMemo } from 'react';
-import { matchPath, useLocation } from 'react-router-dom';
+import { useLocation, matchPath } from 'react-router-dom';
 import invariant from 'invariant';
 
 // Contexts
 import { useMappingContext } from './MappingProvider';
 
 // Interfaces
-import { IRouteProps } from './useRoute/interfaces';
+import { IRouteMap } from './useMap/interfaces';
 
-/**
- * Hook customizado para o usuo de um bread crumb em conjunto com o mapeador
- */
 const useBreadcrumb = () => {
 
-    const routes = useMappingContext();
+  const routes = useMappingContext();
 
-    invariant(Object.values(routes).length, 'You should not use "useBreadcrumb" outside a <MappingProvider>');
+  invariant(routes.size, 'You should not use \'useBreadcrumb\' outside a <MappingProvider>');
 
-    const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
-    const breadcrumb = useMemo(():IRouteProps[] => {
+  const breadcrumb = useMemo(():IRouteMap[] => {
 
-        const list:IRouteProps[] = [];
+    const list:IRouteMap[] = [];
 
-        for (const route in routes) {
+    routes.forEach((route, name) => {
 
-            const { props : { path, label } } = routes[route];
-            
-            if (label && path && path.length && path !== '/') {
+      const { path, label } = route;
 
-                const match = matchPath({
-                    path: String(path || ''),
-                    end: false
-                }, pathname);
+      if (path && path.length && path !== '/') {
 
-                if (match) {
+        const match = matchPath({
+          path: String(path || ''),
+          end: false
+        }, pathname);
 
-                    list.push({ 
-                        name : route, 
-                        path : match.pathname, 
-                        label 
-                    });
-                }
-            }
+        if (match) {
+
+          list.push({  
+            name,
+            path : match.pathname, 
+            label 
+          });
         }
+      }
+    });
 
-        return list;
-    }, [ routes, pathname ]);
+    return list;
+  }, [ routes, pathname ]);
 
-    return breadcrumb;
+  return breadcrumb;
 };
 
 export default useBreadcrumb;

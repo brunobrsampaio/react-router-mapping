@@ -1,22 +1,45 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 
 // Interfaces
-import { IMappingProvider } from './interfaces';
-import { IRouteProps } from '../useRoute/interfaces';
+import { IMappingProvider, IMappingContext } from './interfaces';
+import { IRouteMap } from '../useMap/interfaces';
 
-const MappingContext = createContext<Record<string, React.ReactElement<IRouteProps>>>({});
+const MappingContext = createContext<IMappingContext>({} as IMappingContext);
 
 export const useMappingContext = () => useContext(MappingContext);
 
-/**
- * Contexto do agrupador
- */
-const MappingProvider = ({ children, ...rest }:IMappingProvider) => (
-    <MappingContext.Provider value={{ ...rest }}>
-        { children }
-    </MappingContext.Provider>
-);
+const MappingProvider = ({ children, routes }: IMappingProvider) => {
+  
+  const value = useMemo(() => {
+    
+    if (Array.isArray(routes)) {
+      
+      const mapRoutes = new Map<string, IRouteMap>();
+      
+      routes.forEach((map) => {
 
-MappingProvider.displayName = 'MappingProvider';
+        map.forEach((route, name) => {
+          if (!mapRoutes.has(name)) {
+
+            mapRoutes.set(name, route);
+          } else {
+
+            console.warn(`A route named \'${name}\' has been duplicated in this <MappingProvider> instance`);
+          }
+        });
+      });
+
+      return mapRoutes;
+    }
+
+    return routes;
+  }, [ routes ]);
+
+  return (
+    <MappingContext.Provider value={value}>
+      { children }
+    </MappingContext.Provider>
+  );
+};
 
 export default MappingProvider;

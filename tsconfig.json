@@ -1,21 +1,21 @@
 {
-    "compilerOptions": {
-        "target": "es2021",
-        "module": "ESNext",
-        "jsx": "react",
-        "sourceMap": true,
-        "outDir": "dist",
-        "strict": true,
-        "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "declaration": true,
-        "declarationDir" : ".",
-        "emitDeclarationOnly": true,
-        "noImplicitAny" : false
-    },
-    "exclude": [ "./dist" ],
-    "include": [ "./src" ]
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "ESNext",
+    "jsx": "react",
+    "sourceMap": true,
+    "outDir": "dist",
+    "strict": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationDir": ".",
+    "emitDeclarationOnly": true,
+    "noImplicitAny": false
+  },
+  "exclude": ["./dist"],
+  "include": ["./src"]
 }

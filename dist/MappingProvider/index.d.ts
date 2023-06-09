@@ -1,12 +1,4 @@
-import React from 'react';
-import { IMappingProvider } from './interfaces';
-import { IRouteProps } from '../useRoute/interfaces';
-export declare const useMappingContext: () => Record<string, React.ReactElement<IRouteProps, string | React.JSXElementConstructor<any>>>;
-/**
- * Contexto do agrupador
- */
-declare const MappingProvider: {
-    ({ children, ...rest }: IMappingProvider): JSX.Element;
-    displayName: string;
-};
+import { IMappingProvider, IMappingContext } from './interfaces';
+export declare const useMappingContext: () => IMappingContext;
+declare const MappingProvider: ({ children, routes }: IMappingProvider) => JSX.Element;
 export default MappingProvider;

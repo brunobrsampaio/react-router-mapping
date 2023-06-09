@@ -6,86 +6,89 @@ import invariant from 'invariant';
 import { useMappingContext } from '../MappingProvider';
 
 // Interfaces
-import { IRouteProps } from './interfaces';
+import { IUseRoute } from './interfaces';
+import { IRouteMap } from '../useMap/interfaces';
 
 const lastParamExp = new RegExp('\\:[^\\:].\\?$', 'g');
 
-/**
- * Hook customizado para uso das rotas mapeadas
- */
-const useRoute = () => {
+const useRoute = (): IUseRoute => {
 	
-    const routes = useMappingContext();
+  const routes = useMappingContext();
 
-    invariant(Object.values(routes).length, 'You should not use "useRoute" outside a <MappingProvider>');
+  invariant(routes.size, 'You should not use "useRoute" outside a <MappingProvider>');
 
-    const routeParams = useParams();
+  const routeParams = useParams();
 
-    /**
-	 * Resgata uma rota em especifica quando o arumento "name" for informado
-	 * 
-	 * @param {String} name - Chave de identificação da rota
-	 * @param {Object} params - Objeto de parâmetros para substituição nas rotas
-	 */
-    const route = useCallback((name:string, params?:Record<string, unknown>):string => {
+  //
+  const route = useCallback((name: string, params?: Record<string, unknown>): string | undefined => {
 
-        if (!name) {
+    if (!name) {
 
-            throw '\'Name\' argument not reported';
+      throw '\'Name\' argument not reported';
+    }
+
+    if (routes.size) {
+
+      const route = routes.get(name);
+
+      if (route) {
+
+        let { path } = route;
+  
+        if (path) {
+  
+          params = { ...routeParams, ...params };
+  
+          for (const param in params) {
+      
+            const regExp = new RegExp(`(\\:${param}\\??)`, 'g');
+                      
+            path = path.replace(regExp, String(params[param]));
+          }
+  
+          return path.replace(lastParamExp, '');
         }
+      }
+    }
 
-        if (Object.keys(routes).length) {
-			
-            if (routes[name]) {
+    return undefined;
+  }, [ routes, routeParams ]);
 
-                const { props : { path } } = routes[name];
+  //
+  const all = useCallback(():Record<string, IRouteMap> => {
 
-                let pathname = (path || '');
+    const list: Record<string, IRouteMap> = {};
 
-                params = { ...routeParams, ...params };
+    routes.forEach((route, name) => {
 
-                for (const param in params) {
-	
-                    const regExp = new RegExp(`(\\:${param}\\??)`, 'g');
+      const { path, label } = route;
+
+      if (path && path.length) {
+
+        let pathname = '';
+
+        for (const param in routeParams) {
+      
+          const regExp = new RegExp(`(\\:${param}\\??)`, 'g');
                     
-                    pathname = pathname.replace(regExp, String(params[param]));
-                }
-	
-                return pathname.replace(lastParamExp, '');
-            }
+          pathname = path.replace(regExp, String(routeParams[param]));
         }
 
-        return '';
-    }, [ routes, routeParams ]);
+        list[name] = {
+          name,
+          label,
+          path : pathname.replace(lastParamExp, '')
+        };
+      }
+    });
 
-    /**
-	 * Lista todas as rotas da aplicação
-	 */
-    const all = useCallback(():Record<string, IRouteProps> => {
+    return list;
+  }, [ routes ]);
 
-        const list:Record<string, IRouteProps> = {};
-
-        for (const route in routes) {
-			
-            const { props : { path, label } } = routes[route];
-
-            if (path && path.length) {
-
-                list[route] = {
-                    name : route,
-                    label,
-                    path : String(path || '').replace(lastParamExp, '')
-                };
-            }
-        }
-
-        return list;
-    }, [ routes ]);
-
-    return {
-        route,
-        all
-    };
+  return {
+    route,
+    all
+  };
 };
 
 export default useRoute;
