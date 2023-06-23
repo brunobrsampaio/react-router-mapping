@@ -12,7 +12,7 @@ export type IRouteProps = ConditionalProps & RouteProps & Partial<{
     as: FunctionComponent<RouteProps>;
 }>;
 export interface IUseRoute {
-    route: (name: string, params?: Record<string, unknown>) => string | undefined;
+    route: (name: string, params?: Record<string, unknown>) => string;
     all: () => unknown;
 }
 export {};
