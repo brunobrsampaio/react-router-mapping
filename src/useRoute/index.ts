@@ -20,7 +20,7 @@ const useRoute = (): IUseRoute => {
   const routeParams = useParams();
 
   //
-  const route = useCallback((name: string, params?: Record<string, unknown>): string | undefined => {
+  const route = useCallback((name: string, params?: Record<string, unknown>): string => {
 
     if (!name) {
 
@@ -51,7 +51,7 @@ const useRoute = (): IUseRoute => {
       }
     }
 
-    return undefined;
+    return '';
   }, [ routes, routeParams ]);
 
   //

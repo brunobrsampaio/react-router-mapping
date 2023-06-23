@@ -189,7 +189,7 @@ var useRoute = function useRoute() {
         }
       }
     }
-    return undefined;
+    return '';
   }, [routes, routeParams]);
   //
   var all = React.useCallback(function () {
