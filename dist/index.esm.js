@@ -189,18 +189,18 @@ var useRoute = function useRoute() {
     routes.forEach(function (route, name) {
       var path = route.path,
         label = route.label;
-      if (path && path.length) {
-        var pathname = '';
-        for (var param in routeParams) {
+      var pathname = path;
+      for (var param in routeParams) {
+        if (param !== '*') {
           var regExp = new RegExp("(\\:".concat(param, "\\??)"), 'g');
-          pathname = path.replace(regExp, String(routeParams[param]));
+          pathname = pathname.replace(regExp, String(routeParams[param]));
         }
-        list[name] = {
-          name: name,
-          label: label,
-          path: pathname.replace(lastParamExp, '')
-        };
       }
+      list[name] = {
+        name: name,
+        label: label,
+        path: pathname.replace(lastParamExp, '')
+      };
     });
     return list;
   }, [routes]);
@@ -222,7 +222,7 @@ var useBreadcrumb = function useBreadcrumb() {
         label = route.label;
       if (path && path.length && path !== '/') {
         var match = matchPath({
-          path: String(path || ''),
+          path: path,
           end: false
         }, pathname);
         if (match) {
@@ -290,7 +290,7 @@ var useMap = function useMap(routes) {
         routes = _ref.routes,
         rest = _objectWithoutProperties(_ref, _excluded);
       var nestedPath = [previousPath, path].filter(Boolean).join('/').replace(/(\/+)/g, '/');
-      if (name) {
+      if (!(path !== null && path !== void 0 && path.includes('*')) && name) {
         if (!listRoutes.has(name)) {
           listRoutes.set(name, {
             name: name,

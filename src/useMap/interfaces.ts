@@ -5,6 +5,6 @@ export interface IRouteMap {
   label?: string;
 }
 export type IUseMap = [
-  unknown[],
+  React.ReactNode[],
   ReadonlyMap<string, IRouteMap>
 ]

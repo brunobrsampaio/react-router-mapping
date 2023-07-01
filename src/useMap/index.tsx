@@ -11,14 +11,14 @@ const useMap = (routes: IRouteProps[]): IUseMap => {
 
   const recursiveRoutes = (list: IRouteProps[], previousPath?: string) => {
 
-    const childRoutes: unknown[] = [];
+    const childRoutes: React.ReactNode[] = [];
 
     list.forEach(({ name, label, path, routes, ...rest }) => {
 
       const nestedPath = [ previousPath, path ].filter(Boolean).join('/').replace(/(\/+)/g, '/');
 
-      if (name) {
-
+      if (!path?.includes('*') && name) {
+  
         if (!listRoutes.has(name)) {
 
           listRoutes.set(name, {

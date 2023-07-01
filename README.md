@@ -107,6 +107,8 @@ export default () => {
 };
 ```
 
+For security, routes containing `*` are not added to the Map constructor returned by the `useMap` hook. This can confuse the breadcrumb hook.
+
 # Components
 
 ## **`MappingProvider`** (Required)

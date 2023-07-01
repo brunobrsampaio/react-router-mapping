@@ -23,11 +23,10 @@ const useBreadcrumb = () => {
     routes.forEach((route, name) => {
 
       const { path, label } = route;
-
       if (path && path.length && path !== '/') {
 
         const match = matchPath({
-          path: String(path || ''),
+          path,
           end: false
         }, pathname);
 

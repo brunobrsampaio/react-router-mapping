@@ -1,6 +1,6 @@
 {
   "name": "react-router-mapping",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "This library has as auxiliary tools the developers to have a better way to map, group and manage the routes of their applications.",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",

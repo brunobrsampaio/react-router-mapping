@@ -63,23 +63,23 @@ const useRoute = (): IUseRoute => {
 
       const { path, label } = route;
 
-      if (path && path.length) {
+      let pathname = path;
 
-        let pathname = '';
+      for (const param in routeParams) {
+    
+        if (param !== '*') {
 
-        for (const param in routeParams) {
-      
           const regExp = new RegExp(`(\\:${param}\\??)`, 'g');
                     
-          pathname = path.replace(regExp, String(routeParams[param]));
+          pathname = pathname.replace(regExp, String(routeParams[param]));
         }
-
-        list[name] = {
-          name,
-          label,
-          path : pathname.replace(lastParamExp, '')
-        };
       }
+
+      list[name] = {
+        name,
+        label,
+        path : pathname.replace(lastParamExp, '')
+      };
     });
 
     return list;

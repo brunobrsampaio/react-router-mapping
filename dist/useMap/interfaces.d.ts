@@ -1,9 +1,10 @@
+/// <reference types="react" />
 export interface IRouteMap {
     name: string;
     path: string;
     label?: string;
 }
 export type IUseMap = [
-    unknown[],
+    React.ReactNode[],
     ReadonlyMap<string, IRouteMap>
 ];
