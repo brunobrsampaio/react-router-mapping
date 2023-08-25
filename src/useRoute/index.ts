@@ -41,9 +41,12 @@ const useRoute = (): IUseRoute => {
   
           for (const param in params) {
       
-            const regExp = new RegExp(`(\\:${param}\\??)`, 'g');
-                      
-            path = path.replace(regExp, String(params[param]));
+            if (param !== '*') {
+
+              const regExp = new RegExp(`(\\:${param}\\??)`, 'g');
+                        
+              path = path.replace(regExp, String(params[param]));
+            }
           }
   
           return path.replace(lastParamExp, '');

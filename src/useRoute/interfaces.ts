@@ -1,5 +1,6 @@
 import { FunctionComponent } from 'react';
 import { RouteProps } from 'react-router-dom';
+import { IRouteMap } from '../useMap/interfaces';
 
 type ConditionalProps = 
 | {
@@ -18,5 +19,5 @@ export type IRouteProps = ConditionalProps & RouteProps & Partial<{
 
 export interface IUseRoute {
   route: (name:string, params?: Record<string, unknown>) => string;
-  all: () => unknown;
+  all: () => Record<string, IRouteMap>;
 }
